@@ -1,0 +1,130 @@
+{
+  "project_info": {
+    "project_number": "685101838964",
+    "firebase_url": "https://mytestauthentication-392d1.firebaseio.com",
+    "project_id": "mytestauthentication-392d1",
+    "storage_bucket": "mytestauthentication-392d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685101838964:android:6271b7883f7b570b",
+        "android_client_info": {
+          "package_name": "com.example6767gh.mytestauthentication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685101838964-uhp3oq7f1ctocvnkghjds8big2s1mm7q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example6767gh.mytestauthentication",
+            "certificate_hash": "d8c9a6e22e85012244f48f10500c349f379bf831"
+          }
+        },
+        {
+          "client_id": "685101838964-jf7idu1ishgqkg3268rvporvuvuk1pe7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example6767gh.mytestauthentication",
+            "certificate_hash": "db427a650ba10e7a586b43e844509bd67bc9391a"
+          }
+        },
+        {
+          "client_id": "685101838964-609h86diu2csenarfgp59lgikg6860p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOK0PtZp8PPLa1bhYAoZ0nQPWIfQ_J6z4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685101838964-609h86diu2csenarfgp59lgikg6860p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685101838964:android:f2a4ab760ad76410",
+        "android_client_info": {
+          "package_name": "com.ezzat.carshareing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685101838964-6a6u603pm7cm6kjn6j5lcqan1kku59ng.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ezzat.carshareing",
+            "certificate_hash": "8303624d1fe8bea84164b5beab9f8a31cde3258d"
+          }
+        },
+        {
+          "client_id": "685101838964-609h86diu2csenarfgp59lgikg6860p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOK0PtZp8PPLa1bhYAoZ0nQPWIfQ_J6z4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685101838964-609h86diu2csenarfgp59lgikg6860p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685101838964:android:668492e054fbf60c",
+        "android_client_info": {
+          "package_name": "com.google.cloud.solutions.firebasetest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685101838964-snndqsc47hog6oq5do45uh2urco7q0lp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.google.cloud.solutions.firebasetest",
+            "certificate_hash": "db427a650ba10e7a586b43e844509bd67bc9391a"
+          }
+        },
+        {
+          "client_id": "685101838964-609h86diu2csenarfgp59lgikg6860p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOK0PtZp8PPLa1bhYAoZ0nQPWIfQ_J6z4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685101838964-609h86diu2csenarfgp59lgikg6860p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".View.MapsActivity">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/design_bottom_sheet"
+        android:background="@drawable/bottom_bg"
+        android:layout_marginTop="30dp"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="3dp"
+        app:elevation="4dp"
+        android:padding="20dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_name"
+            android:text="Car name"
+            android:layout_margin="5dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_color"
+            android:text="Car color"
+            android:layout_margin="5dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_dist"
+            android:layout_margin="5dp"
+            android:text="Car distance"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_dur"
+            android:layout_margin="5dp"
+            android:text="Car Duration"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Unlock"
+            android:id="@+id/unlock"
+            android:textColor="@android:color/white"
+            android:background="@color/gray_btn_bg_color"
+            android:clickable="false"
+            android:enabled="false"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="End"
+            android:id="@+id/end"
+            android:textColor="@android:color/white"
+            android:background="@android:color/holo_red_dark"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

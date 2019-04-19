@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tarek.carsharing">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name="com.tarek.carsharing.View.EditProfileActivity"
+            android:parentActivityName="com.tarek.carsharing.View.ProfileActivity" />
+
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="ocr" />
+
+        <activity
+            android:name="com.tarek.carsharing.View.HistoryActivity"
+            android:label="My Trips"
+            android:parentActivityName="com.tarek.carsharing.View.HomeActivity" />
+        <activity
+            android:name="com.tarek.carsharing.View.ContactUsActivity"
+            android:label="Find Us"
+            android:parentActivityName="com.tarek.carsharing.View.HomeActivity" />
+        <activity
+            android:name="com.tarek.carsharing.View.Notifications"
+            android:label="Notifications" />
+        <activity
+            android:name="com.tarek.carsharing.View.AboutActivity"
+            android:label="About" />
+        <activity
+            android:name="com.tarek.carsharing.View.ProfileActivity"
+            android:label="My Profile"
+            android:parentActivityName="com.tarek.carsharing.View.HomeActivity" />
+        <activity
+            android:name="com.tarek.carsharing.View.HomeActivity"
+            android:label="Home"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name="com.tarek.carsharing.View.MapsActivity"/>
+        <activity android:name="com.tarek.carsharing.View.DeviceListActivity"/>
+        <activity
+            android:name="com.tarek.carsharing.View.LoginActivity"
+            android:label="@string/app_name">
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tarek.carsharing.View.SignupActivity"
+            android:label="Signup Page" />
+        <activity android:name="com.tarek.carsharing.View.SignupVerificationActivity" />
+        <activity android:name="com.tarek.carsharing.View.SignupImageActivity" />
+        <activity
+            android:name="com.tarek.carsharing.View.SignupDataActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+    </application>
+
+</manifest>

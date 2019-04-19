@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    tools:context=".View.LoginActivity"
+    android:background="@drawable/driver2"
+
+    >
+
+    <Button
+        android:text="new account "
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/textViewSignup"
+        android:allowUndo="false"
+        android:alpha="1"
+        android:layout_marginBottom="28dp"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:background="@drawable/button"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="24sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/buttonLogin"
+        android:layout_alignStart="@+id/buttonLogin" />
+
+    <Button
+        android:text="Log In"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/buttonLogin"
+        android:onClick="LogInButton"
+        android:alpha="1"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:background="@drawable/button"
+        android:layout_marginBottom="9dp"
+        android:textColorLink="?android:attr/textColorPrimaryInverse"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="24sp"
+        android:layout_above="@+id/textViewSignup"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        style="?android:attr/windowAnimationStyle"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/editTextPassword"
+        android:layout_marginStart="25dp"
+        android:layout_marginLeft="25dp"
+        android:alpha="1"
+        android:drawableLeft="@drawable/mail"
+        android:drawablePadding="10dp"
+        android:ems="10"
+        android:textCursorDrawable="@drawable/courser"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="Email Adress"
+        android:inputType="textPersonName"
+        android:textColor="?android:attr/textColorPrimaryInverseNoDisable"
+        android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+        android:textColorLink="@color/ll"
+        android:textSize="26dp" />
+
+
+    <EditText
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/editTextPassword"
+        android:textCursorDrawable="@drawable/courser"
+        android:backgroundTint="@color/colorPrimary"
+        android:drawableLeft="@drawable/password"
+        android:drawablePadding="10dp"
+        android:hint="Password"
+        android:alpha="1"
+        android:textSize="26sp"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:textColorHint="@color/common_google_signin_btn_text_dark_default"
+        android:layout_marginBottom="12dp"
+        android:layout_above="@+id/buttonLogin"
+        android:layout_alignLeft="@+id/editTextEmail"
+        android:layout_alignStart="@+id/editTextEmail" />
+
+
+
+</RelativeLayout>

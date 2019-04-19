@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.ContactUsActivity">
+
+
+    <LinearLayout
+        android:layout_width="395dp"
+        android:layout_height="714dp"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:paddingTop="@android:dimen/notification_large_icon_height"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:ignore="MissingConstraints">
+
+        <Button
+            android:id="@+id/callbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/call"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="91dp"
+            tools:layout_editor_absoluteY="70dp" />
+
+        <Button
+            android:id="@+id/fbbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/facebook"
+            tools:layout_editor_absoluteX="110dp"
+            tools:layout_editor_absoluteY="198dp" />
+
+        <Button
+            android:id="@+id/emailbtn"
+            android:layout_width="98dp"
+            android:layout_height="103dp"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@drawable/mail"
+            tools:layout_editor_absoluteX="110dp"
+            tools:layout_editor_absoluteY="198dp" />
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
