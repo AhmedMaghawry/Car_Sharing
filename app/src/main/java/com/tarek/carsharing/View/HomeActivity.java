@@ -23,10 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tarek.carsharing.Control.Utils;
-import com.tarek.carsharing.Model.Car;
-import com.tarek.carsharing.Model.User;
-import com.tarek.carsharing.R;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,41 +32,48 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.tarek.carsharing.Control.Utils;
+import com.tarek.carsharing.Model.Car;
+import com.tarek.carsharing.Model.User;
+import com.tarek.carsharing.R;
 
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
-
-    View v1;
+    //(view, image ,text)--> 3 1 for every car
+    View v1;      // linear layout
     View v2;
     View v3;
-    ImageView img1;
+    ImageView img1;  // image of the car
     ImageView img2;
     ImageView img3;
-    TextView tit1;
+    TextView tit1;  // title of the  car
     TextView tit2;
     TextView tit3;
-    TextView c1;
+    TextView c1;  //color
     TextView c2;
     TextView c3;
-    TextView d1;
+    TextView d1; //distance
     TextView d2;
     TextView d3;
-    ImageView nav_imageView;
-    TextView nav_name;
-    ArrayList<Car> allCars = new ArrayList<>();
+    ImageView nav_imageView;  // picture in navigation view (user picture)
+    TextView nav_name;        // name in navigator view  ( user name )
+    ArrayList<Car> allCars = new ArrayList<>(); // arraylist takes "car" dynamcaly changing
 
-    protected LocationManager locationManager;
-    protected LocationListener locationListener;
-    protected double myLat = 0;
-    protected double myLong = 0;
+    protected LocationManager locationManager;     // loza
+    protected LocationListener locationListener;  // loza
+    protected double myLat = 0;    //default latitude
+    protected double myLong = 0;   // default  longititude
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.showLoading(HomeActivity.this);
         setContentView(R.layout.activity_home);
+
+        //**************************** opening home
+        // id of each box
         v1 = findViewById(R.id.f1);
         v2 = findViewById(R.id.f2);
         v3 = findViewById(R.id.f3);
@@ -85,9 +90,11 @@ public class HomeActivity extends AppCompatActivity
         d2 = v2.findViewById(R.id.dist);
         d3 = v3.findViewById(R.id.dist);
 
+
+
         //Toast.makeText(this, FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
 
-        try {
+        try {  // loza
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -106,7 +113,7 @@ public class HomeActivity extends AppCompatActivity
             io.printStackTrace();
         }
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Cars");
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Cars"); // car database
 
 
 
@@ -114,7 +121,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                // for  loop to get all cars information and  added to allCars arraylist
                 for(DataSnapshot carData : dataSnapshot.getChildren()){
 
                     Car carsInformation = carData.getValue(Car.class);
@@ -122,7 +129,7 @@ public class HomeActivity extends AppCompatActivity
                     allCars.add(carsInformation);
                 }
 
-                updateUI();
+                updateUI(); // loza
             }
 
 
@@ -228,7 +235,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private double distance(double lat1, double lat2, double lon1,
-                                  double lon2, double el1, double el2) {
+                            double lon2, double el1, double el2) {
 
         final int R = 6371; // Radius of the earth
 
@@ -245,6 +252,7 @@ public class HomeActivity extends AppCompatActivity
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
         return Math.sqrt(distance);
+
     }
 
     @Override
@@ -257,22 +265,27 @@ public class HomeActivity extends AppCompatActivity
 
     private void updateUI() {
         //Toast.makeText(HomeActivity.this, "Update", Toast.LENGTH_SHORT).show();
+
         int firstmin = Integer.MAX_VALUE;
         int secmin = Integer.MAX_VALUE;
         int thirdmin = Integer.MAX_VALUE;
         int firstminIndex = 0;
         int secminIndex = 0;
         int thirdminIndex = 0;
-        for (int i = 0; i < allCars.size(); i++)
+
+        for (int i = 0 ; i < allCars.size(); i++)
         {
                 /* Check if current element is less than
                 firstmin, then update first, second and
-                third */
+                     third */
             //Toast.makeText(HomeActivity.this, allCars.get(i).getNumber() , Toast.LENGTH_SHORT).show();
 
             String loc = allCars.get(i).getLocation();
-            String locs[] = loc.split(",");
+            String[] locs = loc.split(",");
+
             double dist = distance(Double.valueOf(locs[0].trim()), myLat,Double.valueOf(locs[1].trim()), myLong,0.0,0.0);
+
+
             if (((int)dist) < firstmin)
             {
                 thirdmin = secmin;
@@ -295,6 +308,9 @@ public class HomeActivity extends AppCompatActivity
             else if (((int)dist) < thirdmin) {
                 thirdmin = ((int) dist);
                 thirdminIndex = i;
+            }
+            else{
+
             }
         }
 
@@ -351,7 +367,7 @@ public class HomeActivity extends AppCompatActivity
             v1.setVisibility(View.VISIBLE);
             v2.setVisibility(View.VISIBLE);
             v3.setVisibility(View.VISIBLE);
-        } else if (allCars.size() == 2){
+        } else if (allCars.size() == 2) {
             String trial1 = allCars.get(firstminIndex).getImage();
             String trial2 = allCars.get(secminIndex).getImage();
 
@@ -413,7 +429,7 @@ public class HomeActivity extends AppCompatActivity
         }
 
         Utils.hideLoading();
-        }
+    }
 
     @Override
     public void onProviderDisabled(String provider) {
@@ -429,6 +445,7 @@ public class HomeActivity extends AppCompatActivity
     public void onStatusChanged(String provider, int status, Bundle extras) {
         Log.d("Latitude","status");
     }
+
 }
 /*
 ArrayList<String> permissions=new ArrayList<>();

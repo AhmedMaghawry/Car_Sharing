@@ -20,8 +20,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class SignupActivity extends AppCompatActivity  implements View.OnClickListener  {
 
-
-    private EditText editTextEmail, editTextPassword;
+    private EditText editTextEmail, editTextPassword; // boxex
 
     private FirebaseAuth mAuth;
 
@@ -31,54 +30,53 @@ public class SignupActivity extends AppCompatActivity  implements View.OnClickLi
         setContentView(R.layout.activity_signup);
 
 
-        editTextEmail = findViewById(R.id.editTextEmail);
-        editTextPassword = findViewById(R.id.editTextPassword);
+        editTextEmail = findViewById(R.id.editTextEmail); //sets an id for the email box
+        editTextPassword = findViewById(R.id.editTextPassword); //sets an id for the password box
 
         mAuth = FirebaseAuth.getInstance();
 
-        findViewById(R.id.buttonSignUp).setOnClickListener(this);
-        findViewById(R.id.textViewLogin).setOnClickListener(this);
+        findViewById(R.id.buttonSignUp).setOnClickListener(this);//activate Sign Up button
+
 
     }
-
 
     // methods for user registration in case of registration button
 
 
     private void registerUser() {
 
-        String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim(); // get the email input
+        String password = editTextPassword.getText().toString().trim(); // get the password input
 
 
-        if (email.isEmpty()) {
+        if (email.isEmpty()) { //check if email is empty
             editTextEmail.setError("Email is required"); //error message
-            editTextEmail.requestFocus();
+            editTextEmail.requestFocus();//redirect input
             return;
         }
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) { //check if email is matching the pattern
             editTextEmail.setError("Please enter a valid email");
-            editTextEmail.requestFocus();
+            editTextEmail.requestFocus(); //redirect input
             return;
         }
 
-        if (password.isEmpty()) {
+        if (password.isEmpty()) { //check if password is empty
             editTextPassword.setError("Password is required");
-            editTextPassword.requestFocus();
+            editTextPassword.requestFocus(); //redirect input
             return;
         }
 
-        if (password.length() < 6) {
+        if (password.length() < 6) { //check if password length is 6+ characters
             editTextPassword.setError("Minimum lenght of password should be 6");
-            editTextPassword.requestFocus();
+            editTextPassword.requestFocus(); //redirect input
             return;
         }
 
-        startRegisteration(email, password);
+        startRegisteration(email, password); //if all validation are satisfied call method
     }
 
-    private void startRegisteration(final String email, final String password) {
+    private void startRegisteration(final String email, final String password) { // method for creation of
         Utils.showLoading(this);
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
@@ -88,20 +86,20 @@ public class SignupActivity extends AppCompatActivity  implements View.OnClickLi
 
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful()) { //check for successful registration
                     Utils.hideLoading();
-                    Intent intent = new Intent(SignupActivity.this, SignupDataActivity.class);
-                    intent.putExtra("email", email);
-                    startActivity(intent);
+                    Intent intent = new Intent(SignupActivity.this, SignupDataActivity.class); // intent of signupData
+                    intent.putExtra("email", email); // save in app
+                    startActivity(intent); // direct for  signup continue
                     finish();
-                } else {
+                    FirebaseAuth.getInstance().signOut();
+                } else { // didn t  save the email and  password
                     Utils.hideLoading();
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         Toast.makeText(getApplicationContext(), "You are already registered", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
                 }
             }
         });
@@ -110,14 +108,10 @@ public class SignupActivity extends AppCompatActivity  implements View.OnClickLi
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.buttonSignUp:
+            case R.id.buttonSignUp: // signup then direct to the rest of the signup sequences
                 registerUser();
                 break;
 
-            case R.id.textViewLogin:
-                finish();
-                startActivity(new Intent(this, LoginActivity.class));
-                break;
         }
     }
     @Override
@@ -127,3 +121,6 @@ public class SignupActivity extends AppCompatActivity  implements View.OnClickLi
         Utils.hideLoading();
     }
 }
+
+
+

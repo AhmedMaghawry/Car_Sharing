@@ -31,21 +31,6 @@
         android:textColorHint="@color/common_google_signin_btn_text_dark_default"
         android:textSize="24sp" />
 
-    <Button
-        android:id="@+id/textViewLogin"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="600dp"
-        android:layout_marginBottom="26dp"
-        android:alpha="1"
-        android:background="@drawable/button"
-        android:onClick="LogInButton"
-        android:text="I have an account "
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textColorLink="?android:attr/textColorPrimaryInverse"
-        android:textSize="24sp" />
 
     <EditText
         android:id="@+id/editTextEmail"

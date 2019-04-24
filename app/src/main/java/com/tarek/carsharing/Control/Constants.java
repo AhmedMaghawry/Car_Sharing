@@ -14,6 +14,7 @@ public interface Constants {
     int MESSAGE_DEVICE_NAME = 4;
     int MESSAGE_TOAST = 5;
 
+    String CODE_SP= "code";
     String DEVICE_NAME = "device_name";
 
     int REQUEST_CONNECT_DEVICE_SECURE = 1;

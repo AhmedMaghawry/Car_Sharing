@@ -16,4 +16,5 @@
     <string name="find_text_cloud_button">Find text (cloud)</string>
     <string name="find_objects_button">Find objects</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDPdyQ0DKwxdHuZQOFGIBBpz_CyRVDuhdE</string>
+    <string name="title_activity_splash">Splash</string>
 </resources>

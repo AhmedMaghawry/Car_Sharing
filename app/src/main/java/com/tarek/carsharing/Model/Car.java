@@ -35,7 +35,7 @@ public class Car implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-        updateCar();
+       // updateCar();
     }
 
     public String getNumber() {
@@ -44,7 +44,7 @@ public class Car implements Serializable {
 
     public void setNumber(String number) {
         this.number = number;
-        updateCar();
+       // updateCar();
     }
 
     public String getImage() {
@@ -53,7 +53,7 @@ public class Car implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
-        updateCar();
+        //updateCar();
     }
 
     public String getColor() {
@@ -62,7 +62,7 @@ public class Car implements Serializable {
 
     public void setColor(String color) {
         this.color = color;
-        updateCar();
+       // updateCar();
     }
 
     public String getLocation() {
@@ -71,7 +71,7 @@ public class Car implements Serializable {
 
     public void setLocation(String location) {
         this.location = location;
-        updateCar();
+        //updateCar();
     }
 
     public int getMangle1() {
@@ -80,7 +80,7 @@ public class Car implements Serializable {
 
     public void setMangle1(int mangle1) {
         this.mangle1 = mangle1;
-        updateCar();
+        //updateCar();
     }
 
     public int getMangle2() {
@@ -89,7 +89,7 @@ public class Car implements Serializable {
 
     public void setMangle2(int mangle2) {
         this.mangle2 = mangle2;
-        updateCar();
+       // updateCar();
     }
 
     public int getTemp() {
@@ -98,7 +98,7 @@ public class Car implements Serializable {
 
     public void setTemp(int temp) {
         this.temp = temp;
-        updateCar();
+        //updateCar();
     }
 
     public String getSongs() {
@@ -107,7 +107,7 @@ public class Car implements Serializable {
 
     public void setSongs(String songs) {
         this.songs = songs;
-        updateCar();
+       // updateCar();
     }
 
     public int getGaslevel() {
@@ -116,7 +116,7 @@ public class Car implements Serializable {
 
     public void setGaslevel(int gaslevel) {
         this.gaslevel = gaslevel;
-        updateCar();
+       // updateCar();
     }
 
     public CarStatus getStatus() {
@@ -125,7 +125,7 @@ public class Car implements Serializable {
 
     public void setStatus(CarStatus status) {
         this.status = status;
-        updateCar();
+       // updateCar();
     }
 
     public String getCode() {
@@ -134,7 +134,7 @@ public class Car implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
-        updateCar();
+      //  updateCar();
     }
 
     public Map<String, Object> toMap() {
@@ -153,23 +153,23 @@ public class Car implements Serializable {
         map.put("code", code);
         return map;
     }
-
+/*
     public void deleteCar () {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/" + number, null);
         mDatabase.getReference("Cars").updateChildren(childUpdates);
-    }
+    }*/
 
-    private void updateCar() {
+/*    private void updateCar() {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> userValues = toMap();
         childUpdates.put("/" + number, userValues);
         mDatabase.getReference("Cars").updateChildren(childUpdates);
-    }
+    }*/
 
-    public boolean addCar() {
+/*    public boolean addCar() {
         try {
             DatabaseReference base = FirebaseDatabase.getInstance().getReference("Cars");
             base.child(number).setValue(this);
@@ -177,7 +177,7 @@ public class Car implements Serializable {
             return false;
         }
         return true;
-    }
+    }*/
 }
 
 //FirebaseAuth.getInstance().getCurrentUser().getUid()

@@ -24,13 +24,14 @@ import java.io.IOException;
 
 public class SignupImageActivity extends AppCompatActivity {
 
-    private static final int CHOOSE_IMAGE = 101;
+    private static final int CHOOSE_IMAGE = 101;  //to save the image
 
-    private ImageView imageView;
+    private ImageView imageView;   // Image  icon
     private Button nextBtn;
 
-    private Uri uriProfileImage;
-    private String profileImageUrl;
+    private Uri uriProfileImage;      // to save  the image  type
+    // uniform resources identifier image storage
+    private String profileImageUrl;  // UrL of the  photo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +41,17 @@ public class SignupImageActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         nextBtn = findViewById(R.id.ButtonNext);
 
-        nextBtn.setOnClickListener(new View.OnClickListener() {
+        nextBtn.setOnClickListener(new View.OnClickListener() {  // when clicking the  next button
             @Override
             public void onClick(View view) {
-                if (profileImageUrl != null) {
-                    Intent prev = getIntent();
+                if (profileImageUrl != null) { // if  uploaded the  picture
+                    Intent prev = getIntent(); //all the previous data in the signup sequence
                     String email = prev.getStringExtra("email");
                     int age = prev.getIntExtra("age", 0);
                     String name = prev.getStringExtra("name");
                     String phone = prev.getStringExtra("phone");
 
-                    Intent intent = new Intent(SignupImageActivity.this, SignupVerificationActivity.class);
+                    Intent intent = new Intent(SignupImageActivity.this, SignupVerificationActivity.class); //mina's activity
                     intent.putExtra("image", profileImageUrl);
                     intent.putExtra("name", name);
                     intent.putExtra("age", age);
@@ -58,20 +59,18 @@ public class SignupImageActivity extends AppCompatActivity {
                     intent.putExtra("email", email);
                     startActivity(intent);
                     finish();
-                } else {
+                } else {// if photo not uploaded/choosen
                     Toast.makeText(SignupImageActivity.this,"Failed to set the image. Try again", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // on click lilo :heart: , save and display
+
         imageView.setOnClickListener(new View.OnClickListener() {
 
 
             @Override
-            public void onClick(View view) {
-                showImageChooser();
-            }
+            public void onClick(View view) { showImageChooser(); }  //call method
         });
 
     }
@@ -87,7 +86,7 @@ public class SignupImageActivity extends AppCompatActivity {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriProfileImage);
                 imageView.setImageBitmap(bitmap);
 
-                uploadImageToFirebaseStorage();
+                uploadImageToFirebaseStorage(); // upload to firebase the picture
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -99,8 +98,9 @@ public class SignupImageActivity extends AppCompatActivity {
     private void uploadImageToFirebaseStorage() {
         // storage
         StorageReference profileImageRef =
-                FirebaseStorage.getInstance().getReference("profilepics/" + System.currentTimeMillis() + ".jpg");
-        if (uriProfileImage != null) {
+                FirebaseStorage.getInstance().getReference("profilepics/" + System.currentTimeMillis() + ".jpg"); // in database folder profilepics
+        //System.currentTimeMillis(), is random sequence done  by getting time in millis
+        if (uriProfileImage != null) { // upload
             Utils.showLoading(this);
             profileImageRef.putFile(uriProfileImage)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -114,7 +114,7 @@ public class SignupImageActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
+                        public void onFailure(@NonNull Exception e) { // fail to opload
                             Utils.hideLoading();
                             Toast.makeText(SignupImageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -126,11 +126,11 @@ public class SignupImageActivity extends AppCompatActivity {
     //  selects image of the user
 
     /* */
-    private void showImageChooser() {
+    private void showImageChooser() { // create new image  intent ( user select the photo required from gallery)
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT); // get the image
-        startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), CHOOSE_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), CHOOSE_IMAGE); //save in CHOOSE_IMAGE
     }
 
     @Override
