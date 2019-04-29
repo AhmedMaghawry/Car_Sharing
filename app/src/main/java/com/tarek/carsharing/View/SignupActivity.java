@@ -92,7 +92,6 @@ public class SignupActivity extends AppCompatActivity  implements View.OnClickLi
                     intent.putExtra("email", email); // save in app
                     startActivity(intent); // direct for  signup continue
                     finish();
-                    FirebaseAuth.getInstance().signOut();
                 } else { // didn t  save the email and  password
                     Utils.hideLoading();
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {

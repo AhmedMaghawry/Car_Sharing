@@ -70,10 +70,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 Utils.hideLoading();
             }
         });
-
-
     }
-
 
     @Override
     public void onClick(View view) {

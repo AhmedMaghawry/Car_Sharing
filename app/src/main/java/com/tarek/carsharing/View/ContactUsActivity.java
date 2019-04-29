@@ -35,12 +35,12 @@ public class ContactUsActivity extends AppCompatActivity {
             public void onClick(View arg0) {
 
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/100001114376487"));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/337592936901040"));
                     startActivity(intent);
 
 
                 } catch(Exception e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/m7mdtarek96")));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/Go-Around-337592936901040")));
                     return;
                 }
             }
@@ -49,7 +49,7 @@ public class ContactUsActivity extends AppCompatActivity {
 
             public void onClick(View arg0) {
                 Intent email = new Intent(Intent.ACTION_SEND);
-                email.putExtra(Intent.EXTRA_EMAIL, new String[]{ "m7mdtarek44@gmail.com"});
+                email.putExtra(Intent.EXTRA_EMAIL, new String[]{ "go.around.carshare@gmail.com"});
                 email.setType("message/rfc822");
                 startActivity(Intent.createChooser(email, "Choose an Email client :"));
             }

@@ -50,7 +50,7 @@ public class SignupDataActivity extends AppCompatActivity {
         }
 
         else{  // boxes are filled
-            if(Integer.parseInt(ageNum)<=70 ||Integer.parseInt(ageNum)>=18 || (Integer.parseInt(ageNum)/10)==0 ) //check for age validation
+            if(Integer.parseInt(ageNum)>=70 ||Integer.parseInt(ageNum)<=18 || (Integer.parseInt(ageNum)/10)==0 ) //check for age validation
             {
                 Toast.makeText(this,"please enter a valid age",Toast.LENGTH_LONG).show();
                 age.requestFocus();

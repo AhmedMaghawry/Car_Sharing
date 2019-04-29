@@ -114,19 +114,38 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         String   old      =profileAge.getText().toString();
         String number = ivNumber.getText().toString();
 
-        if( (!TextUtils.isEmpty(name)) && (!TextUtils.isEmpty(old)) && (!TextUtils.isEmpty(number))){
-            user.setAge(Integer.parseInt(old));
-            user.setName(name);
-            user.setPhone(number);
-            user.setImage(profileImageUrl1);
-            Toast.makeText(this,"information edited ",Toast.LENGTH_LONG).show();
+        if( (TextUtils.isEmpty(name)) || (TextUtils.isEmpty(old))  || (TextUtils.isEmpty(number)) ) {
+            Toast.makeText(this, "please Fill all the information needed", Toast.LENGTH_LONG).show();
+        }
+        else {
+            if (Integer.parseInt(old) >= 70 || Integer.parseInt(old) <= 18 || (Integer.parseInt(number) / 10) == 0) //check for age validation
+            {
+                Toast.makeText(this, "please enter a valid age", Toast.LENGTH_LONG).show();
+                profileAge.requestFocus();
+            }
+            else { //check for number validation
+                if (number.length() != 11) {
+                    Toast.makeText(this, "please enter a valid phone number", Toast.LENGTH_LONG).show();
+                    ivNumber.requestFocus();
+                }
+                else {
+                    user.setAge(Integer.parseInt(old));
+                    user.setName(name);
+                    user.setPhone(number);
+                    if (profileImageUrl1 != null) {
+                        user.setImage(profileImageUrl1);
+                    }
+                    else {
 
+                    }
+                    Toast.makeText(this, "information edited ", Toast.LENGTH_LONG).show();
+                    finish();
+                    startActivity(new Intent(this, ProfileActivity.class));
+                }
+            }
         }
-        else{
-            Toast.makeText(this,"please Fill all the information needed",Toast.LENGTH_LONG).show();
-        }
-        finish();
-        startActivity(new Intent(this, ProfileActivity.class));
+
+
     }
 
 
@@ -224,7 +243,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Toast.makeText(EditProfileActivity.this, "Edit Prof Destroy", Toast.LENGTH_SHORT).show();
         Utils.hideLoading();
     }
 

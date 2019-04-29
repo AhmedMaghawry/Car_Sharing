@@ -22,9 +22,6 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,21 +39,21 @@ import java.util.ArrayList;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
     //(view, image ,text)--> 3 1 for every car
-    View v1;      // linear layout
-    View v2;
-    View v3;
-    ImageView img1;  // image of the car
-    ImageView img2;
-    ImageView img3;
-    TextView tit1;  // title of the  car
-    TextView tit2;
-    TextView tit3;
-    TextView c1;  //color
-    TextView c2;
-    TextView c3;
-    TextView d1; //distance
-    TextView d2;
-    TextView d3;
+    View box1;      // linear layout
+    View box2;
+    View box3;
+    ImageView carImage1;  // image of the car
+    ImageView carImage2;
+    ImageView carImage3;
+    TextView carModel1;  // type of the  car
+    TextView carModel2;
+    TextView carModel3;
+    TextView carColor1;  //color of the car
+    TextView carColor2;
+    TextView carColor3;
+    TextView plateNumber1; // plate number of the car
+    TextView plateNumber2;
+    TextView plateNumber3;
     ImageView nav_imageView;  // picture in navigation view (user picture)
     TextView nav_name;        // name in navigator view  ( user name )
     ArrayList<Car> allCars = new ArrayList<>(); // arraylist takes "car" dynamcaly changing
@@ -74,21 +71,21 @@ public class HomeActivity extends AppCompatActivity
 
         //**************************** opening home
         // id of each box
-        v1 = findViewById(R.id.f1);
-        v2 = findViewById(R.id.f2);
-        v3 = findViewById(R.id.f3);
-        img1 = v1.findViewById(R.id.ivProfilePic);
-        img2 = v2.findViewById(R.id.ivProfilePic);
-        img3 = v3.findViewById(R.id.ivProfilePic);
-        tit1 = v1.findViewById(R.id.name);
-        tit2 = v2.findViewById(R.id.name);
-        tit3 = v3.findViewById(R.id.name);
-        c1 = v1.findViewById(R.id.color);
-        c2 = v2.findViewById(R.id.color);
-        c3 = v3.findViewById(R.id.color);
-        d1 = v1.findViewById(R.id.dist);
-        d2 = v2.findViewById(R.id.dist);
-        d3 = v3.findViewById(R.id.dist);
+        box1 = findViewById(R.id.f1);
+        box2 = findViewById(R.id.f2);
+        box3 = findViewById(R.id.f3);
+        carImage1 = box1.findViewById(R.id.ivProfilePic);
+        carImage2 = box2.findViewById(R.id.ivProfilePic);
+        carImage3 = box3.findViewById(R.id.ivProfilePic);
+        carModel1 = box1.findViewById(R.id.name);
+        carModel2 = box2.findViewById(R.id.name);
+        carModel3 = box3.findViewById(R.id.name);
+        carColor1 = box1.findViewById(R.id.color);
+        carColor2 = box2.findViewById(R.id.color);
+        carColor3 = box3.findViewById(R.id.color);
+        plateNumber1 = box1.findViewById(R.id.carNumber);
+        plateNumber2 = box2.findViewById(R.id.carNumber);
+        plateNumber3 = box3.findViewById(R.id.carNumber);
 
 
 
@@ -125,7 +122,6 @@ public class HomeActivity extends AppCompatActivity
                 for(DataSnapshot carData : dataSnapshot.getChildren()){
 
                     Car carsInformation = carData.getValue(Car.class);
-                    Toast.makeText(HomeActivity.this, carsInformation.getNumber(), Toast.LENGTH_SHORT).show();
                     allCars.add(carsInformation);
                 }
 
@@ -166,7 +162,6 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                //Toast.makeText(ProfileActivity.this, databaseError.getCode(), Toast.LENGTH_SHORT).show();
             }
         });
         navigationView.setNavigationItemSelectedListener(this);
@@ -202,8 +197,6 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-        /*    Toast toast = Toast.makeText(HomeActivity.this, "HAHAHAHA", Toast.LENGTH_SHORT);
-            toast.show();    */
 
             startActivity(new Intent(this, ProfileActivity.class));
 
@@ -213,7 +206,7 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(this, HistoryActivity.class));
 
         } else if (id == R.id.nav_about) {
-            startActivity(new Intent(this, MapsActivity.class));
+            startActivity(new Intent(this, AboutActivity.class));
 
         } else if (id == R.id.nav_contact) {
             startActivity(new Intent(this, ContactUsActivity.class));
@@ -259,12 +252,9 @@ public class HomeActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         myLat = location.getLatitude();
         myLong = location.getLongitude();
-        //Log.i("elec", myLat + " , " + myLong);
-        //updateUI();
     }
 
     private void updateUI() {
-        //Toast.makeText(HomeActivity.this, "Update", Toast.LENGTH_SHORT).show();
 
         int firstmin = Integer.MAX_VALUE;
         int secmin = Integer.MAX_VALUE;
@@ -278,7 +268,6 @@ public class HomeActivity extends AppCompatActivity
                 /* Check if current element is less than
                 firstmin, then update first, second and
                      third */
-            //Toast.makeText(HomeActivity.this, allCars.get(i).getNumber() , Toast.LENGTH_SHORT).show();
 
             String loc = allCars.get(i).getLocation();
             String[] locs = loc.split(",");
@@ -314,7 +303,6 @@ public class HomeActivity extends AppCompatActivity
             }
         }
 
-        //Toast.makeText(HomeActivity.this, allCars.size()+"", Toast.LENGTH_SHORT).show();
 
 
         if (allCars.size() >= 3) {
@@ -323,26 +311,26 @@ public class HomeActivity extends AppCompatActivity
             String trial3 = allCars.get(thirdminIndex).getImage();
 
             Picasso.with(getApplication()).load(trial1)
-                    .into(img1);
-            tit1.setText(allCars.get(firstminIndex).getType());
-            c1.setText(allCars.get(firstminIndex).getColor());
-            d1.setText(allCars.get(firstminIndex).getNumber());
+                    .into(carImage1);
+            carModel1.setText(allCars.get(firstminIndex).getType());
+            carColor1.setText(allCars.get(firstminIndex).getColor());
+            plateNumber1.setText(allCars.get(firstminIndex).getNumber());
 
 
             Picasso.with(getApplication()).load(trial2)
-                    .into(img2);
-            tit2.setText(allCars.get(secminIndex).getType());
-            c2.setText(allCars.get(secminIndex).getColor());
-            d2.setText(allCars.get(secminIndex).getNumber());
+                    .into(carImage2);
+            carModel2.setText(allCars.get(secminIndex).getType());
+            carColor2.setText(allCars.get(secminIndex).getColor());
+            plateNumber2.setText(allCars.get(secminIndex).getNumber());
 
             Picasso.with(getApplication()).load(trial3)
-                    .into(img3);
-            tit3.setText(allCars.get(thirdminIndex).getType());
-            c3.setText(allCars.get(thirdminIndex).getColor());
-            d3.setText(allCars.get(thirdminIndex).getNumber());
+                    .into(carImage3);
+            carModel3.setText(allCars.get(thirdminIndex).getType());
+            carColor3.setText(allCars.get(thirdminIndex).getColor());
+            plateNumber3.setText(allCars.get(thirdminIndex).getNumber());
 
             final int finalFirstminIndex = firstminIndex;
-            v1.setOnClickListener(new View.OnClickListener() {
+            box1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startMap(allCars.get(finalFirstminIndex));
@@ -350,7 +338,7 @@ public class HomeActivity extends AppCompatActivity
             });
 
             final int finalSecminIndex = secminIndex;
-            v2.setOnClickListener(new View.OnClickListener() {
+            box2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startMap(allCars.get(finalSecminIndex));
@@ -358,34 +346,34 @@ public class HomeActivity extends AppCompatActivity
             });
 
             final int finalThirdminIndex = thirdminIndex;
-            v3.setOnClickListener(new View.OnClickListener() {
+            box3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startMap(allCars.get(finalThirdminIndex));
                 }
             });
-            v1.setVisibility(View.VISIBLE);
-            v2.setVisibility(View.VISIBLE);
-            v3.setVisibility(View.VISIBLE);
+            box1.setVisibility(View.VISIBLE);
+            box2.setVisibility(View.VISIBLE);
+            box3.setVisibility(View.VISIBLE);
         } else if (allCars.size() == 2) {
             String trial1 = allCars.get(firstminIndex).getImage();
             String trial2 = allCars.get(secminIndex).getImage();
 
             Picasso.with(getApplication()).load(trial1)
-                    .into(img1);
-            tit1.setText(allCars.get(firstminIndex).getType());
-            c1.setText(allCars.get(firstminIndex).getColor());
-            d1.setText(allCars.get(firstminIndex).getNumber());
+                    .into(carImage1);
+            carModel1.setText(allCars.get(firstminIndex).getType());
+            carColor1.setText(allCars.get(firstminIndex).getColor());
+            plateNumber1.setText(allCars.get(firstminIndex).getNumber());
 
 
             Picasso.with(getApplication()).load(trial2)
-                    .into(img2);
-            tit2.setText(allCars.get(secminIndex).getType());
-            c2.setText(allCars.get(secminIndex).getColor());
-            d2.setText(allCars.get(secminIndex).getNumber());
+                    .into(carImage2);
+            carModel2.setText(allCars.get(secminIndex).getType());
+            carColor2.setText(allCars.get(secminIndex).getColor());
+            plateNumber2.setText(allCars.get(secminIndex).getNumber());
 
             final int finalFirstminIndex = firstminIndex;
-            v1.setOnClickListener(new View.OnClickListener() {
+            box1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startMap(allCars.get(finalFirstminIndex));
@@ -393,39 +381,40 @@ public class HomeActivity extends AppCompatActivity
             });
 
             final int finalSecminIndex = secminIndex;
-            v2.setOnClickListener(new View.OnClickListener() {
+            box2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startMap(allCars.get(finalSecminIndex));
                 }
             });
-            v1.setVisibility(View.VISIBLE);
-            v2.setVisibility(View.VISIBLE);
-            v3.setVisibility(View.GONE);
+            box1.setVisibility(View.VISIBLE);
+            box2.setVisibility(View.VISIBLE);
+            box3.setVisibility(View.GONE);
         } else if (allCars.size() == 1) {
             String trial1 = allCars.get(firstminIndex).getImage();
 
             Picasso.with(getApplication()).load(trial1)
-                    .into(img1);
-            tit1.setText(allCars.get(firstminIndex).getType());
-            c1.setText(allCars.get(firstminIndex).getColor());
-            d1.setText(allCars.get(firstminIndex).getNumber());
+                    .into(carImage1);
+            carModel1.setText(allCars.get(firstminIndex).getType());
+            carColor1.setText(allCars.get(firstminIndex).getColor());
+            plateNumber1.setText(allCars.get(firstminIndex).getNumber());
             final int finalFirstminIndex = firstminIndex;
-            v1.setOnClickListener(new View.OnClickListener() {
+            box1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startMap(allCars.get(finalFirstminIndex));
                 }
             });
 
-            v2.setVisibility(View.GONE);
-            v3.setVisibility(View.GONE);
-            Log.i("elec", 1 + "");
+            box2.setVisibility(View.GONE);
+            box3.setVisibility(View.GONE);
+
+
         } else {
-            v1.setVisibility(View.GONE);
-            v2.setVisibility(View.GONE);
-            v3.setVisibility(View.GONE);
-            Log.i("elec", "Size :0");
+            box1.setVisibility(View.GONE);
+            box2.setVisibility(View.GONE);
+            box3.setVisibility(View.GONE);
+
         }
 
         Utils.hideLoading();
@@ -433,17 +422,15 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onProviderDisabled(String provider) {
-        Log.d("Latitude","disable");
+
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        Log.d("Latitude","enable");
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.d("Latitude","status");
     }
 
 }

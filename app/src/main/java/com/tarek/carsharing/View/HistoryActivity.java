@@ -64,7 +64,7 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Toast.makeText(HistoryActivity.this, "Main A 11 Destroy", Toast.LENGTH_SHORT).show();
+
         //Utils.hideLoading();
     }
 
