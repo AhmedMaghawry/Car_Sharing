@@ -52,4 +52,18 @@
         android:text="Next" />
 
 
+    <Button
+        android:id="@+id/ButtonSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="18dp"
+        android:layout_marginRight="18dp"
+        android:layout_marginBottom="10dp"
+        android:text="Skip" />
+
+
 </RelativeLayout>

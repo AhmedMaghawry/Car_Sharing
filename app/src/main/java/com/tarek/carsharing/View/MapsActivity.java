@@ -344,12 +344,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int fare = getFare(endTime - startTime , trip.getStart(), trip.getEnd());
         trip.setFare(fare);
         trip.setTime(getFormatedTime(endTime - startTime));
+        trip.updateTrip();
         carGet.setStatus(CarStatus.OFF);
         Utils.showMessage(this, "Trip Completed your fair is : " + fare + " LE");
         end.setVisibility(View.GONE);
     }
 
-    private int getFare(long l, String start, String end) {
+    private int getFare(long duration, String start, String end) {
         //TODO:Change here
         return 50;
     }

@@ -27,7 +27,7 @@ public class SignupImageActivity extends AppCompatActivity {
     private static final int CHOOSE_IMAGE = 101;  //to save the image
 
     private ImageView imageView;   // Image  icon
-    private Button nextBtn;
+    private Button nextBtn, skipBtn;
 
     private Uri uriProfileImage;      // to save  the image  type
     // uniform resources identifier image storage
@@ -40,6 +40,7 @@ public class SignupImageActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.imageView);
         nextBtn = findViewById(R.id.ButtonNext);
+        skipBtn = findViewById(R.id.ButtonSkip);
 
         nextBtn.setOnClickListener(new View.OnClickListener() {  // when clicking the  next button
             @Override
@@ -62,6 +63,26 @@ public class SignupImageActivity extends AppCompatActivity {
                 } else {// if photo not uploaded/choosen
                     Toast.makeText(SignupImageActivity.this,"Failed to set the image. Try again", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        skipBtn.setOnClickListener(new View.OnClickListener() {  // when clicking the  next button
+            @Override
+            public void onClick(View view) {
+                    Intent prev = getIntent(); //all the previous data in the signup sequence
+                    String email = prev.getStringExtra("email");
+                    int age = prev.getIntExtra("age", 0);
+                    String name = prev.getStringExtra("name");
+                    String phone = prev.getStringExtra("phone");
+
+                    Intent intent = new Intent(SignupImageActivity.this, SignupVerificationActivity.class); //mina's activity
+                    intent.putExtra("image", "");
+                    intent.putExtra("name", name);
+                    intent.putExtra("age", age);
+                    intent.putExtra("phone", phone);
+                    intent.putExtra("email", email);
+                    startActivity(intent);
+                    finish();
             }
         });
 

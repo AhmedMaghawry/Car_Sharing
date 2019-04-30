@@ -71,8 +71,15 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 profileName.setText(userProfileData.getName());
                 profileAge.setText(userProfileData.getAge()+"");
                 ivNumber.setText(userProfileData.getPhone());
-                Picasso.with(getApplication()).load(userProfileData.getImage())
-                        .into(ivProfilePic);
+                try {
+                    Picasso.with(getApplication()).load(userProfileData.getImage())
+                            .placeholder(R.drawable.pla)
+                            .into(ivProfilePic);
+                } catch (Exception e) {
+                    Picasso.with(getApplication())
+                            .load(R.drawable.pla)
+                            .into(ivProfilePic);
+                }
 
                 user = userProfileData;
             }
@@ -138,6 +145,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     else {
 
                     }
+                    user.updateUser();
                     Toast.makeText(this, "information edited ", Toast.LENGTH_LONG).show();
                     finish();
                     startActivity(new Intent(this, ProfileActivity.class));

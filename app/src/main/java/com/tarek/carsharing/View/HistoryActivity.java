@@ -23,6 +23,7 @@ import com.tarek.carsharing.Control.MainAdapter;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -86,6 +87,8 @@ public class HistoryActivity extends AppCompatActivity {
 
                     Log.i("mohamed","1");
                 }
+
+                Collections.reverse(allTrips);
 
                 Log.i("mohamed","4");
 

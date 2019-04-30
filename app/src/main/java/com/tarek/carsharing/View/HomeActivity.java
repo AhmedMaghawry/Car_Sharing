@@ -2,13 +2,18 @@ package com.tarek.carsharing.View;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -31,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.tarek.carsharing.Control.Utils;
 import com.tarek.carsharing.Model.Car;
+import com.tarek.carsharing.Model.CarStatus;
 import com.tarek.carsharing.Model.User;
 import com.tarek.carsharing.R;
 
@@ -107,6 +113,7 @@ public class HomeActivity extends AppCompatActivity
                     0, this);
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
         } catch (Exception io) {
+            //checkLoc();
             io.printStackTrace();
         }
 
@@ -122,7 +129,8 @@ public class HomeActivity extends AppCompatActivity
                 for(DataSnapshot carData : dataSnapshot.getChildren()){
 
                     Car carsInformation = carData.getValue(Car.class);
-                    allCars.add(carsInformation);
+                    if (carsInformation.getStatus() != CarStatus.ON)
+                        allCars.add(carsInformation);
                 }
 
                 updateUI(); // loza
@@ -156,8 +164,15 @@ public class HomeActivity extends AppCompatActivity
                 User userProfileData = dataSnapshot.getValue(User.class);
 
                 nav_name.setText(userProfileData.getName());
-                Picasso.with(getApplication()).load(userProfileData.getImage())
-                        .into(nav_imageView);
+                try {
+                    Picasso.with(getApplication()).load(userProfileData.getImage())
+                            .placeholder(R.drawable.pla)
+                            .into(nav_imageView);
+                } catch (Exception e) {
+                    Picasso.with(getApplication())
+                            .load(R.drawable.pla)
+                            .into(nav_imageView);
+                }
             }
 
             @Override
@@ -422,6 +437,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onProviderDisabled(String provider) {
+        checkLoc();
 
     }
 
@@ -433,6 +449,113 @@ public class HomeActivity extends AppCompatActivity
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
+    private void checkLoc() {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Please Enable GPS provider")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            checkLoc();
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkPermissionsLoc1();
+        checkPermissionsLoc2();
+        //checkPermissionsCam();
+        //checkLoc();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //checkLoc();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //checkLoc();
+    }
+
+    private void checkPermissionsLoc1() {
+
+        if  (   // check for permissions ( bluetooth /  Camera / location
+                ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+
+            //  when if is true it gives means all permissions are available
+            ActivityCompat.requestPermissions(HomeActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        else { // get permession from user
+            Toast.makeText(HomeActivity.this, "Loc1 Permision already granted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkPermissionsLoc2() {
+
+        if  (ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(HomeActivity.this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
+        }
+        else { // get permession from user
+            Toast.makeText(HomeActivity.this, "Loc2 Permision already granted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkPermissionsCam() {
+
+        if  ( ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(HomeActivity.this,
+                    new String[]{Manifest.permission.CAMERA}, 3);
+        }
+        else { // get permession from user
+            Toast.makeText(HomeActivity.this, "Cam Permision already granted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(HomeActivity.this, "Location 1  Good", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(new Intent(HomeActivity.this, HomeActivity.class));
+                } else {
+                    Toast.makeText(HomeActivity.this, "Location 1  Bad", Toast.LENGTH_SHORT).show();
+                    onDestroy();
+                }
+                break;
+            case 2 :
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(HomeActivity.this, "Location 2  Good", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(new Intent(HomeActivity.this, HomeActivity.class));
+                } else {
+                    Toast.makeText(HomeActivity.this, "Location 2  Bad", Toast.LENGTH_SHORT).show();
+                    onDestroy();
+                }
+                break;
+        }
+    }
 }
 /*
 ArrayList<String> permissions=new ArrayList<>();

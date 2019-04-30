@@ -32,7 +32,7 @@ public class User implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-        updateUser();
+        //updateUser();
     }
 
     public String getEmail() {
@@ -41,7 +41,7 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-        updateUser();
+        //updateUser();
     }
 
     public String getPhone() {
@@ -50,7 +50,7 @@ public class User implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
-        updateUser();
+        //updateUser();
     }
 
     public String getNid() {
@@ -59,7 +59,7 @@ public class User implements Serializable {
 
     public void setNid(String nid) {
         this.nid = nid;
-        updateUser();
+        //updateUser();
     }
 
     public String getExdate() {
@@ -68,7 +68,7 @@ public class User implements Serializable {
 
     public void setExdate(String exdate) {
         this.exdate = exdate;
-        updateUser();
+        //updateUser();
     }
 
     public String getSongs() {
@@ -77,7 +77,7 @@ public class User implements Serializable {
 
     public void setSongs(String songs) {
         this.songs = songs;
-        updateUser();
+        //updateUser();
     }
 
     public int getAge() {
@@ -86,7 +86,7 @@ public class User implements Serializable {
 
     public void setAge(int age) {
         this.age = age;
-        updateUser();
+        //updateUser();
     }
 
     public int getMangle1() {
@@ -95,7 +95,7 @@ public class User implements Serializable {
 
     public void setMangle1(int mangle1) {
         this.mangle1 = mangle1;
-        updateUser();
+        //updateUser();
     }
 
     public int getMangle2() {
@@ -104,7 +104,7 @@ public class User implements Serializable {
 
     public void setMangle2(int mangle2) {
         this.mangle2 = mangle2;
-        updateUser();
+        //updateUser();
     }
 
     public int getTemp() {
@@ -113,7 +113,7 @@ public class User implements Serializable {
 
     public void setTemp(int temp) {
         this.temp = temp;
-        updateUser();
+        //updateUser();
     }
 
     public String getImage() {
@@ -122,7 +122,7 @@ public class User implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
-        updateUser();
+        //updateUser();
     }
 
     public Map<String, Object> toMap() {
@@ -148,7 +148,7 @@ public class User implements Serializable {
         mDatabase.getReference("Users").updateChildren(childUpdates);
     }
 
-    private void updateUser() {
+    public void updateUser() {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> userValues = toMap();

@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".View.Splash"
-            android:label="@string/title_activity_splash">
+            android:label="Go Around">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 

@@ -59,8 +59,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 profileAge.setText(userProfileData.getAge()+"");
                 profileEmail.setText(userProfileData.getEmail());
                 ivNumber.setText(userProfileData.getPhone());
-                Picasso.with(getApplication()).load(userProfileData.getImage())
-                        .into(profilePic);
+                try {
+                    Picasso.with(getApplication()).load(userProfileData.getImage())
+                            .placeholder(R.drawable.pla)
+                            .into(profilePic);
+                } catch (Exception e) {
+                    Picasso.with(getApplication())
+                            .load(R.drawable.pla)
+                            .into(profilePic);
+                }
                 Utils.hideLoading();
             }
 

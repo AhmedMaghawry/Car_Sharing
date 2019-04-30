@@ -33,7 +33,7 @@ public class Trip implements Serializable{
 
     public void setCarid(String carid) {
         this.carid = carid;
-       // updateTrip();
+       //updateTrip();
     }
 
     public String getStart() {
@@ -119,13 +119,13 @@ public class Trip implements Serializable{
         mDatabase.getReference("Trips").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(childUpdates);
     }
 
-/*    private void updateTrip() {
+    public void updateTrip() {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> userValues = toMap();
         childUpdates.put("/" + id, userValues);
         mDatabase.getReference("Trips").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(childUpdates);
-    }*/
+    }
 
     public boolean addTrip() {
         try {

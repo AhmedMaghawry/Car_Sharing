@@ -49,26 +49,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onStart() {
         super.onStart();
 
-        if  (   // check for permissions ( bluetooth /  Camera / location
-                ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
-
-            //  when if is true it gives means all permissions are available
-
-        }
-        else { // get permession from user
-            ActivityCompat.requestPermissions(LoginActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.BLUETOOTH,
-                            Manifest.permission.BLUETOOTH_ADMIN,
-                            Manifest.permission.CAMERA}, 1);
-        }
-
         if (mAuth.getCurrentUser() != null) {   // not logged in
             finish();
             startActivity(new Intent(this, HomeActivity.class)); //go to Homepage
