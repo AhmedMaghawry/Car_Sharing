@@ -474,8 +474,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        checkPermissionsLoc1();
-        checkPermissionsLoc2();
+
         //checkPermissionsCam();
         //checkLoc();
     }
@@ -492,70 +491,7 @@ public class HomeActivity extends AppCompatActivity
         //checkLoc();
     }
 
-    private void checkPermissionsLoc1() {
 
-        if  (   // check for permissions ( bluetooth /  Camera / location
-                ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-
-            //  when if is true it gives means all permissions are available
-            ActivityCompat.requestPermissions(HomeActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-        else { // get permession from user
-            Toast.makeText(HomeActivity.this, "Loc1 Permision already granted", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void checkPermissionsLoc2() {
-
-        if  (ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(HomeActivity.this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
-        }
-        else { // get permession from user
-            Toast.makeText(HomeActivity.this, "Loc2 Permision already granted", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void checkPermissionsCam() {
-
-        if  ( ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(HomeActivity.this,
-                    new String[]{Manifest.permission.CAMERA}, 3);
-        }
-        else { // get permession from user
-            Toast.makeText(HomeActivity.this, "Cam Permision already granted", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(HomeActivity.this, "Location 1  Good", Toast.LENGTH_SHORT).show();
-                    finish();
-                    startActivity(new Intent(HomeActivity.this, HomeActivity.class));
-                } else {
-                    Toast.makeText(HomeActivity.this, "Location 1  Bad", Toast.LENGTH_SHORT).show();
-                    onDestroy();
-                }
-                break;
-            case 2 :
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(HomeActivity.this, "Location 2  Good", Toast.LENGTH_SHORT).show();
-                    finish();
-                    startActivity(new Intent(HomeActivity.this, HomeActivity.class));
-                } else {
-                    Toast.makeText(HomeActivity.this, "Location 2  Bad", Toast.LENGTH_SHORT).show();
-                    onDestroy();
-                }
-                break;
-        }
-    }
 }
 /*
 ArrayList<String> permissions=new ArrayList<>();

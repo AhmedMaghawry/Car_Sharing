@@ -30,14 +30,15 @@ public class SignupDataActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         final String email = intent.getStringExtra("email"); // get previous data of user "email"
+        final String password = intent.getStringExtra("password"); // get previous data of user "email"
         next.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { goNext(email) ; // when clicking next , send email to next function
+            public void onClick(View view) { goNext(email, password) ; // when clicking next , send email to next function
             }
         });
     }
 
-    private void goNext(String email){ // get editText data and save to intent
+    private void goNext(String email, String password){ // get editText data and save to intent
 
         String firstname = firstName.getText().toString().trim();
         String lastname = lastName.getText().toString().trim();
@@ -46,11 +47,11 @@ public class SignupDataActivity extends AppCompatActivity {
 
         if( (TextUtils.isEmpty(firstname)) || (TextUtils.isEmpty(lastname)) || (TextUtils.isEmpty(ageNum)) || (TextUtils.isEmpty(number))){
             Toast.makeText(this,"please Fill all the information needed",Toast.LENGTH_LONG).show();
-            // check if all boxex are empty
+             // check if all boxex are empty
         }
 
         else{  // boxes are filled
-            if(Integer.parseInt(ageNum)>=70 ||Integer.parseInt(ageNum)<=18 || (Integer.parseInt(ageNum)/10)==0 ) //check for age validation
+            if(!(Integer.parseInt(ageNum)<=70  || Integer.parseInt(ageNum)>=18)) //check for age validation
             {
                 Toast.makeText(this,"please enter a valid age",Toast.LENGTH_LONG).show();
                 age.requestFocus();
@@ -68,6 +69,7 @@ public class SignupDataActivity extends AppCompatActivity {
                     intent.putExtra("age", Integer.parseInt(ageNum.trim()));
                     intent.putExtra("phone", number);
                     intent.putExtra("email", email);
+                    intent.putExtra("password", password);
 
                     startActivity(intent);
                     finish();

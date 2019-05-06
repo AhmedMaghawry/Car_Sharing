@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.tarek.carsharing.Control.Utils;
 import com.tarek.carsharing.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +50,7 @@ public class SignupImageActivity extends AppCompatActivity {
                     int age = prev.getIntExtra("age", 0);
                     String name = prev.getStringExtra("name");
                     String phone = prev.getStringExtra("phone");
+                    String password = prev.getStringExtra("password");
 
                     Intent intent = new Intent(SignupImageActivity.this, SignupVerificationActivity.class); //mina's activity
                     intent.putExtra("image", profileImageUrl);
@@ -58,6 +58,7 @@ public class SignupImageActivity extends AppCompatActivity {
                     intent.putExtra("age", age);
                     intent.putExtra("phone", phone);
                     intent.putExtra("email", email);
+                    intent.putExtra("password", password);
                     startActivity(intent);
                     finish();
                 } else {// if photo not uploaded/choosen
@@ -69,20 +70,20 @@ public class SignupImageActivity extends AppCompatActivity {
         skipBtn.setOnClickListener(new View.OnClickListener() {  // when clicking the  next button
             @Override
             public void onClick(View view) {
-                    Intent prev = getIntent(); //all the previous data in the signup sequence
-                    String email = prev.getStringExtra("email");
-                    int age = prev.getIntExtra("age", 0);
-                    String name = prev.getStringExtra("name");
-                    String phone = prev.getStringExtra("phone");
+                Intent prev = getIntent(); //all the previous data in the signup sequence
+                String email = prev.getStringExtra("email");
+                int age = prev.getIntExtra("age", 0);
+                String name = prev.getStringExtra("name");
+                String phone = prev.getStringExtra("phone");
 
-                    Intent intent = new Intent(SignupImageActivity.this, SignupVerificationActivity.class); //mina's activity
-                    intent.putExtra("image", "");
-                    intent.putExtra("name", name);
-                    intent.putExtra("age", age);
-                    intent.putExtra("phone", phone);
-                    intent.putExtra("email", email);
-                    startActivity(intent);
-                    finish();
+                Intent intent = new Intent(SignupImageActivity.this, SignupVerificationActivity.class); //mina's activity
+                intent.putExtra("image", "");
+                intent.putExtra("name", name);
+                intent.putExtra("age", age);
+                intent.putExtra("phone", phone);
+                intent.putExtra("email", email);
+                startActivity(intent);
+                finish();
             }
         });
 

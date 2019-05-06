@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Verify id"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:fontFamily="sans-serif-thin"
+        android:textColor="@color/gray_btn_bg_pressed_color"
+        android:layout_marginBottom="20dp"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:textColorHint="@color/gray_btn_bg_color"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Code"
+            android:imeActionId="6"
+            android:textColor="@color/gray_btn_bg_pressed_color"
+            android:imeActionLabel="Enter Code Received"
+            android:imeOptions="actionUnspecified"
+            android:inputType="number"
+            android:maxLines="1"
+            android:textColorHighlight="@color/gray_btn_bg_pressed_color"
+            android:textColorHint="@color/gray_btn_bg_pressed_color"
+            android:layout_margin="15dp"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

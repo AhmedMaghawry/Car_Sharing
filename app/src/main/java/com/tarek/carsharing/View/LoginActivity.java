@@ -48,6 +48,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
+        checkPermissionsLoc1();
+        checkPermissionsLoc2();
 
         if (mAuth.getCurrentUser() != null) {   // not logged in
             finish();
@@ -130,31 +132,72 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //Utils.hideLoading();
     }
 
-    @Override  // the result of permissions  (allow/deny)
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 1: { // Allow
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    Toast.makeText(LoginActivity.this, "GOOD", Toast.LENGTH_SHORT).show();
-                    break;
-                } else { // Deny
-                    Toast.makeText(LoginActivity.this, "Not GOOD", Toast.LENGTH_SHORT).show();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
 
-                    onDestroy(); //  Loza: we can add page  to ask permissions
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request.
+    private void checkPermissionsLoc1() {
+
+        if  (   // check for permissions ( bluetooth /  Camera / location
+                ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+
+            //  when if is true it gives means all permissions are available
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        else { // get permession from user
+            Toast.makeText(LoginActivity.this, "Loc1 Permision already granted", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void checkPermissionsLoc2() {
+
+        if  (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
+        }
+        else { // get permession from user
+            Toast.makeText(LoginActivity.this, "Loc2 Permision already granted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkPermissionsCam() {
+
+        if  ( ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[]{Manifest.permission.CAMERA}, 3);
+        }
+        else { // get permession from user
+            Toast.makeText(LoginActivity.this, "Cam Permision already granted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(LoginActivity.this, "Location 1  Good", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                } else {
+                    Toast.makeText(LoginActivity.this, "Location 1  Bad", Toast.LENGTH_SHORT).show();
+                    onDestroy();
+                }
+                break;
+            case 2 :
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(LoginActivity.this, "Location 2  Good", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                } else {
+                    Toast.makeText(LoginActivity.this, "Location 2  Bad", Toast.LENGTH_SHORT).show();
+                    onDestroy();
+                }
+                break;
+        }
+    }
+
 }
 
 

@@ -66,6 +66,12 @@
             android:name=".View.HomeActivity"
             android:label="Home"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".View.SignupActivity"
+            android:label="Signup Page"
+            android:parentActivityName=".View.LoginActivity" />
+        <activity android:name=".View.SignupVerificationActivity" />
+
         <activity android:name=".View.MapsActivity" />
         <activity android:name=".View.DeviceListActivity" />
         <activity
@@ -73,11 +79,6 @@
             android:label="@string/app_name">
 
         </activity>
-        <activity
-            android:name=".View.SignupActivity"
-            android:label="Signup Page"
-            android:parentActivityName=".View.LoginActivity" />
-        <activity android:name=".View.SignupVerificationActivity" />
         <activity android:name=".View.SignupImageActivity" />
         <activity
             android:name=".View.SignupDataActivity"
