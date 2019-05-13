@@ -1,6 +1,7 @@
 package com.tarek.carsharing.View;
 
 
+import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,8 +23,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.tarek.carsharing.Control.MainAdapter;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -35,6 +38,8 @@ public class HistoryActivity extends AppCompatActivity {
     ArrayList<Trip> allTrips = new ArrayList<>();
     ArrayList<Car> car1  = new ArrayList<>();
     public String carid;
+    Geocoder geocoder;
+
 
 
     @Override
@@ -48,6 +53,8 @@ public class HistoryActivity extends AppCompatActivity {
         mAdapter= new MainAdapter(allTrips,car1, this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        geocoder = new Geocoder(this, Locale.getDefault());
 
         first(new onAction() {
             @Override
@@ -83,7 +90,23 @@ public class HistoryActivity extends AppCompatActivity {
 
                     //Log.i("mohamed", tripsHistory.getCarid());
 
-                    allTrips.add(tripsHistory);
+
+                    String loc = tripsHistory.getStart();
+                    String locs[] = loc.split(",");
+                    String loc1 = tripsHistory.getEnd();
+                    String locs1[] = loc1.split(",");
+                    try {
+
+
+                        String start = geocoder.getFromLocation(Double.parseDouble(locs[0].trim()), Double.parseDouble(locs[1].trim()),1).get(0).getAddressLine(0);
+                        String end = geocoder.getFromLocation(Double.parseDouble(locs1[0].trim()), Double.parseDouble(locs1[1].trim()),1).get(0).getAddressLine(0);
+                    tripsHistory.setStart(start);
+                    tripsHistory.setEnd(end);
+                        allTrips.add(tripsHistory);
+                    }catch(IOException ex) {
+                        //Do something with the exception
+                    }
+
 
                     Log.i("mohamed","1");
                 }
@@ -105,6 +128,13 @@ public class HistoryActivity extends AppCompatActivity {
 
     }
 
+
+
+
+     // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+
+
     protected  void mohamed() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDatabase1 = FirebaseDatabase.getInstance().getReference("Cars");
@@ -116,6 +146,7 @@ public class HistoryActivity extends AppCompatActivity {
                     Toast.makeText(HistoryActivity.this, "dddd "+carid, Toast.LENGTH_SHORT).show();
                     Car cars = dataSnapshot.child(carid).getValue(Car.class);
                     car1.add(cars);
+
                 }
                 Utils.hideLoading();
                 mAdapter.notifyDataSetChanged();

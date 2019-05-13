@@ -36,6 +36,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.mcxiaoke.volley:library:1.0.19'
     implementation 'com.android.support:cardview-v7:28.0.0'
     implementation 'com.github.pepperonas:materialdialog:0.3.4'
     implementation 'com.google.firebase:firebase-ml-vision:18.0.1'

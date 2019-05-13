@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.tarek.carsharing.View.HomeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
@@ -19,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.tarek.carsharing.View.HomeActivity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +27,10 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static com.tarek.carsharing.Control.Constants.CODE_SP;
 
-//import cn.pedant.SweetAlert.SweetAlertDialog;
-
 public class Utils {
 
-    static  SweetAlertDialog pDialog;
+    public final static String TAG = "Utils";
+    public static SweetAlertDialog pDialog;
 
     public static boolean isInternetConnected(Context ctx) {
         if (ctx != null) {
@@ -54,7 +53,7 @@ public class Utils {
         context.startActivity(intent);
     }
 
-    public static void showDialog(Context context,String title, String message) {
+    public static void showMessage(Context context, String title, String message) {
         pDialog = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
         pDialog.setTitleText(title);
         pDialog.setContentText(message);
@@ -62,7 +61,7 @@ public class Utils {
         pDialog.show();
     }
 
-    public static void showError(Context context,String title, String message) {
+    public static void showError(Context context, String title, String message) {
         pDialog = new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE);
         pDialog.setTitleText(title);
         pDialog.setContentText(message);
@@ -92,19 +91,11 @@ public class Utils {
                 pDialog = null;
             } catch (Exception e) {
                 pDialog = null;
-
+                Log.e(TAG, "Utils:: hideProgressDialog: ", e);
             }
         }
     }
 
-    public static void showMessage(Context context, String message) {
-        pDialog = new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        pDialog.setTitleText(message);
-        pDialog.setCancelable(false);
-        pDialog.show();
-
-    }
     public static void sendVerCode(String phoneNumber, PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacl) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
@@ -113,7 +104,6 @@ public class Utils {
                 TaskExecutors.MAIN_THREAD,               // Activity (for callback binding)
                 callbacl);        // OnVerificationStateChangedCallbacks
     }
-
 
     public static void signInWithPhoneAuthCredential(final Activity context, final PhoneAuthCredential credential) {
 
