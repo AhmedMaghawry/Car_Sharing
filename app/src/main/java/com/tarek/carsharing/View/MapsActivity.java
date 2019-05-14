@@ -82,10 +82,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.NetworkInterface;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -97,6 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public static final String SECURE_SETTINGS_BLUETOOTH_ADDRESS = "bluetooth_address";
     private boolean startTrip = false ;
+   private Button toggle;
     public static Uri mImageUri;
     static String path;
     private GoogleMap mMap;
@@ -105,7 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     LocationRequest mLocationRequest;
     private Trip trip;
-    private Car carGet;
+    public Car carGet;
     private User currentUser;
     private View bottomLayout;
     private TextView carName, carColor, carDistance, carDuration;
@@ -137,6 +140,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+toggle = (Button) findViewById(R.id.toggle);
+
         LayoutInflater inflater1 = MapsActivity.this.getLayoutInflater();
         final View mView2 = inflater1.inflate(R.layout.layout_dialog, null);
         damagee = mView2.findViewById(R.id.damage);
@@ -159,8 +164,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status
             carGet = new Car("Nissan", "52415"
                     , "https://firebasestorage.googleapis.com/v0/b/mytestauthentication-392d1.appspot.com/o/cars%2FIcon-512.png?alt=media&token=c3984cb9-a3e8-4be0-a5c6-8bcf2273dd4e",
-                    "Black", "29.954643, 31.230067", 50, 60, 22, "1,2,3", 45, CarStatus.OFF);
+                    "Black", "29.954643, 31.230067", 50, 60, 22, "1,2,3", 45, CarStatus.OFF,"OFF");
         }
+
+      toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                carGet.setToggle("GAGA");
+                carGet.updateCar();
+
+            }
+        });
+
 
         DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users");
 
@@ -185,7 +200,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         self = this;
         //  getBluetoothMacAddress(MapsActivity.this);
         //    Log.i("Tarook", address);
-        Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MapsActivity.this,         getBluetoothMacAddresss(MapsActivity.this), Toast.LENGTH_SHORT).show();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -226,6 +242,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 unlockCar();
+
             }
         });
 
@@ -239,12 +256,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public static String getBluetoothMacAddress(Context mContext) {
+    public static String getMacAddr() {
+        try {
+
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(Integer.toHexString(b & 0xFF) + ":");
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        return "02:00:00:00:00:00";
+    }
+
+
+    public static String getBluetoothMacAddresss(Context mContext) {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
         // BluetoothAdapter.getDefaultAdapter().DEFAULT_MAC_ADDRESS;
         // if device does not support Bluetooth
         if (mBluetoothAdapter == null) {
-            Log.i("Tarook", "device does not support bluetooth");
+            Log.d("DDDD", "device does not support bluetooth");
             return null;
         }
 
@@ -254,13 +300,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //  System.out.println(">>>>>G fail to get mac address " + address);
 
             try {
+
+
                 ContentResolver mContentResolver = mContext.getContentResolver();
+
                 address = Settings.Secure.getString(mContentResolver, SECURE_SETTINGS_BLUETOOTH_ADDRESS);
+               Log.i("DDDD2",address);
 
             } catch (Exception e) {
-                Log.i("Tarook", "device does not support bluetooth");
+
 
             }
+
 
         } else {
 
@@ -268,26 +319,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return address;
     }
-
-    private String getBluetoothMacAddress() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        String bluetoothMacAddress = "";
-        try {
-            Field mServiceField = bluetoothAdapter.getClass().getDeclaredField("mService");
-            mServiceField.setAccessible(true);
-
-            Object btManagerService = mServiceField.get(bluetoothAdapter);
-
-
-            if (btManagerService != null) {
-                bluetoothMacAddress = (String) btManagerService.getClass().getMethod("getAddress").invoke(btManagerService);
-            }
-        } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) {
-
-        }
-        return bluetoothMacAddress;
-    }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -317,7 +348,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleApiClient.connect();
 
     }
-
     @Override
     public void onLocationChanged(Location location) {
         if (getApplicationContext() != null) {
@@ -589,7 +619,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //   carGet.setStatus(CarStatus.enpanne);
                         carCrash2();
                         Toast.makeText(MapsActivity.this, "carcrush", Toast.LENGTH_SHORT).show();
                         dialog.cancel();
@@ -661,6 +690,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         trip.updateTrip();
         startTrip = false ;
         carGet.setStatus(CarStatus.OFF);
+        carGet.updateCar();
         SweetAlertDialog
                 pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
         pDialog.setTitleText("Fare");
@@ -673,6 +703,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 finish();
             }
         });
+
+
         pDialog.show();
         end.setVisibility(View.GONE);
     }
@@ -831,6 +863,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         carGet.setMangle1(currentUser.getMangle1());
         carGet.setMangle2(currentUser.getMangle2());
         carGet.setStatus(CarStatus.ON);
+        carGet.updateCar();
     }
 
     private void sendMessage(String message) {

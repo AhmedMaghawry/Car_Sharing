@@ -9,13 +9,13 @@ import java.util.Map;
 
 public class Car implements Serializable {
 
-    private String type, number, image, color, location, songs, code;
+    private String type, number, image, color, location, songs, code,toggle;
     private int gaslevel, mangle1, mangle2, temp;
     private CarStatus status;
 
     public Car() {}
 
-    public Car(String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status) {
+    public Car(String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status ,String toggle)  {
         this.type = type;
         this.number = number;
         this.image = image;
@@ -27,6 +27,7 @@ public class Car implements Serializable {
         this.songs = songs;
         this.gaslevel = gaslevel;
         this.status = status;
+        this.toggle = toggle;
     }
 
     public String getType() {
@@ -136,6 +137,14 @@ public class Car implements Serializable {
         this.code = code;
       //  updateCar();
     }
+    public String getToggle() {
+        return toggle;
+    }
+
+    public void setToggle(String toggle) {
+        this.toggle = toggle;
+
+    }
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
@@ -151,6 +160,7 @@ public class Car implements Serializable {
         map.put("gaslevel", gaslevel);
         map.put("status", status);
         map.put("code", code);
+        map.put("toggle",toggle);
         return map;
     }
 /*
@@ -161,13 +171,13 @@ public class Car implements Serializable {
         mDatabase.getReference("Cars").updateChildren(childUpdates);
     }*/
 
-/*    private void updateCar() {
+   public void updateCar() {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> userValues = toMap();
         childUpdates.put("/" + number, userValues);
         mDatabase.getReference("Cars").updateChildren(childUpdates);
-    }*/
+    }
 
 /*    public boolean addCar() {
         try {

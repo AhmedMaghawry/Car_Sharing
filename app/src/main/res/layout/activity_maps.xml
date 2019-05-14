@@ -63,6 +63,13 @@
             android:background="@color/gray_btn_bg_color"
             android:clickable="false"
             android:enabled="false"/>
+        <Button
+            android:id="@+id/toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Toggel"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary" />
 
         <Button
             android:layout_width="match_parent"
