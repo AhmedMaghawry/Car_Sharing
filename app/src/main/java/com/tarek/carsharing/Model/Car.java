@@ -1,6 +1,5 @@
 package com.tarek.carsharing.Model;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.Serializable;
@@ -9,13 +8,15 @@ import java.util.Map;
 
 public class Car implements Serializable {
 
-    private String type, number, image, color, location, songs, code,toggle;
+    private String type, number, image, color, location, songs, code,id;
     private int gaslevel, mangle1, mangle2, temp;
     private CarStatus status;
+    private CarAcquireKey acquirekey;
+    private CarTrip carstartend;
 
     public Car() {}
 
-    public Car(String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status ,String toggle)  {
+    public Car(String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status, CarAcquireKey acquirekey, CarTrip carstartend , String id) {
         this.type = type;
         this.number = number;
         this.image = image;
@@ -27,16 +28,29 @@ public class Car implements Serializable {
         this.songs = songs;
         this.gaslevel = gaslevel;
         this.status = status;
-        this.toggle = toggle;
+        this.acquirekey=acquirekey;
+        this.carstartend=carstartend;
+        this.id=id;
     }
+
 
     public String getType() {
         return type;
     }
 
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setType(String type) {
         this.type = type;
-       // updateCar();
+        //updateCar();
     }
 
     public String getNumber() {
@@ -45,7 +59,7 @@ public class Car implements Serializable {
 
     public void setNumber(String number) {
         this.number = number;
-       // updateCar();
+        // updateCar();
     }
 
     public String getImage() {
@@ -63,7 +77,7 @@ public class Car implements Serializable {
 
     public void setColor(String color) {
         this.color = color;
-       // updateCar();
+        //updateCar();
     }
 
     public String getLocation() {
@@ -74,6 +88,7 @@ public class Car implements Serializable {
         this.location = location;
         //updateCar();
     }
+
 
     public int getMangle1() {
         return mangle1;
@@ -90,7 +105,7 @@ public class Car implements Serializable {
 
     public void setMangle2(int mangle2) {
         this.mangle2 = mangle2;
-       // updateCar();
+        //updateCar();
     }
 
     public int getTemp() {
@@ -108,7 +123,7 @@ public class Car implements Serializable {
 
     public void setSongs(String songs) {
         this.songs = songs;
-       // updateCar();
+        //updateCar();
     }
 
     public int getGaslevel() {
@@ -117,7 +132,7 @@ public class Car implements Serializable {
 
     public void setGaslevel(int gaslevel) {
         this.gaslevel = gaslevel;
-       // updateCar();
+        //updateCar();
     }
 
     public CarStatus getStatus() {
@@ -126,7 +141,20 @@ public class Car implements Serializable {
 
     public void setStatus(CarStatus status) {
         this.status = status;
-       // updateCar();
+        //updateCar();
+    }
+
+    public CarAcquireKey getAcquirekey() {
+        return acquirekey;
+    }
+
+    public void setAcquirekey(CarAcquireKey acquirekey) {
+        this.acquirekey = acquirekey;
+        //updateCar();
+    }
+
+    public CarTrip getCarstartend() {
+        return carstartend;
     }
 
     public String getCode() {
@@ -135,15 +163,11 @@ public class Car implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
-      //  updateCar();
-    }
-    public String getToggle() {
-        return toggle;
+        // updateCar();
     }
 
-    public void setToggle(String toggle) {
-        this.toggle = toggle;
-
+    public void setCarstartend(CarTrip carstartend) {
+        this.carstartend = carstartend;
     }
 
     public Map<String, Object> toMap() {
@@ -159,10 +183,14 @@ public class Car implements Serializable {
         map.put("songs", songs);
         map.put("gaslevel", gaslevel);
         map.put("status", status);
+        map.put("AcquireKey" , acquirekey);
+        map.put("carstartend", carstartend);
         map.put("code", code);
-        map.put("toggle",toggle);
+        map.put("id",id);
         return map;
     }
+
+
 /*
     public void deleteCar () {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
@@ -171,7 +199,7 @@ public class Car implements Serializable {
         mDatabase.getReference("Cars").updateChildren(childUpdates);
     }*/
 
-   public void updateCar() {
+    public void updateCar() {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> userValues = toMap();

@@ -2,7 +2,9 @@ package com.tarek.carsharing.View;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ContentResolver;
@@ -10,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -25,6 +28,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -35,6 +39,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,7 +55,9 @@ import com.tarek.carsharing.Control.TripCodeGenerator;
 import com.tarek.carsharing.Control.Utils;
 import com.tarek.carsharing.Control.onAction;
 import com.tarek.carsharing.Model.Car;
+import com.tarek.carsharing.Model.CarAcquireKey;
 import com.tarek.carsharing.Model.CarStatus;
+import com.tarek.carsharing.Model.CarTrip;
 import com.tarek.carsharing.Model.Trip;
 import com.tarek.carsharing.Model.TripStatus;
 import com.tarek.carsharing.Model.User;
@@ -76,43 +83,45 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+
+
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.NetworkInterface;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static android.os.Environment.getExternalStoragePublicDirectory;
 import static com.tarek.carsharing.Control.Constants.*;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener , RoutingListener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements  OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener , RoutingListener, GoogleMap.OnMarkerClickListener {
 
-
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    public String reply;
     public static final String SECURE_SETTINGS_BLUETOOTH_ADDRESS = "bluetooth_address";
     private boolean startTrip = false ;
-   private Button toggle;
-    public static Uri mImageUri;
-    static String path;
+    public  Uri tempUri;
     private GoogleMap mMap;
     private String TAG = "so47492459";
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
     private Trip trip;
-    public Car carGet;
+    private Car carGet;
     private User currentUser;
     private View bottomLayout;
     private TextView carName, carColor, carDistance, carDuration;
-    private Button unlock, end;
+    private Button unlock, end , startEnd;
     private BottomSheetBehavior behavior;
     private Marker carMarker;
 
@@ -126,12 +135,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private long startTime;
     private long endTime;
     private String code;
-
-
+    int flag =0;
+    boolean b = true;
+    //  String rateId;
 
     private ImageView damagee ;
     private String pathFile;
     //  private  Button imageDamage;
+
 
 
 
@@ -140,18 +151,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-toggle = (Button) findViewById(R.id.toggle);
-
         LayoutInflater inflater1 = MapsActivity.this.getLayoutInflater();
         final View mView2 = inflater1.inflate(R.layout.layout_dialog, null);
         damagee = mView2.findViewById(R.id.damage);
+        //   rateId = carGet.getId();
 
-
-        if(Build.VERSION.SDK_INT >=23){
-            requestPermissions(new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+        if (Build.VERSION.SDK_INT >= 23) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
 
         }
-
 
 
         Utils.showLoading(this);
@@ -164,18 +172,8 @@ toggle = (Button) findViewById(R.id.toggle);
             //String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status
             carGet = new Car("Nissan", "52415"
                     , "https://firebasestorage.googleapis.com/v0/b/mytestauthentication-392d1.appspot.com/o/cars%2FIcon-512.png?alt=media&token=c3984cb9-a3e8-4be0-a5c6-8bcf2273dd4e",
-                    "Black", "29.954643, 31.230067", 50, 60, 22, "1,2,3", 45, CarStatus.OFF,"OFF");
+                    "Black", "29.954643, 31.230067", 50, 60, 22, "1,2,3", 45, CarStatus.OFF, CarAcquireKey.LOCK, CarTrip.END, null );
         }
-
-      toggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                carGet.setToggle("GAGA");
-                carGet.updateCar();
-
-            }
-        });
-
 
         DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users");
 
@@ -193,25 +191,23 @@ toggle = (Button) findViewById(R.id.toggle);
                 Utils.hideLoading();
             }
         });
-
-
-
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         self = this;
         //  getBluetoothMacAddress(MapsActivity.this);
         //    Log.i("Tarook", address);
-       // Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(MapsActivity.this,         getBluetoothMacAddresss(MapsActivity.this), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
+
     }
 
     @SuppressLint("ResourceAsColor")
     private void setupBottom(Route route) {
+
         bottomLayout = findViewById(R.id.design_bottom_sheet);
         behavior = BottomSheetBehavior.from(bottomLayout);
         carName = findViewById(R.id.car_name);
@@ -219,7 +215,7 @@ toggle = (Button) findViewById(R.id.toggle);
         carDistance = findViewById(R.id.car_dist);
         carDuration = findViewById(R.id.car_dur);
         unlock = findViewById(R.id.unlock);
-        //  imageDamage=findViewById(R.id.imageDamage);
+        startEnd = findViewById(R.id.startend);
         end = findViewById(R.id.end);
 
         carName.setText(carGet.getType());
@@ -242,7 +238,6 @@ toggle = (Button) findViewById(R.id.toggle);
             @Override
             public void onClick(View v) {
                 unlockCar();
-
             }
         });
 
@@ -253,72 +248,16 @@ toggle = (Button) findViewById(R.id.toggle);
             }
         });
 
-
-    }
-
-    public static String getMacAddr() {
-        try {
-
-            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface nif : all) {
-                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
-
-                byte[] macBytes = nif.getHardwareAddress();
-                if (macBytes == null) {
-                    return "";
-                }
-
-                StringBuilder res1 = new StringBuilder();
-                for (byte b : macBytes) {
-                    res1.append(Integer.toHexString(b & 0xFF) + ":");
-                }
-
-                if (res1.length() > 0) {
-                    res1.deleteCharAt(res1.length() - 1);
-                }
-                return res1.toString();
+        startEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startTrip();
             }
-        } catch (Exception ex) {
-        }
-        return "02:00:00:00:00:00";
+        });
     }
 
 
-    public static String getBluetoothMacAddresss(Context mContext) {
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // BluetoothAdapter.getDefaultAdapter().DEFAULT_MAC_ADDRESS;
-        // if device does not support Bluetooth
-        if (mBluetoothAdapter == null) {
-            Log.d("DDDD", "device does not support bluetooth");
-            return null;
-        }
-
-        String address = mBluetoothAdapter.getAddress();
-        if (address.equals("02:00:00:00:00:00")) {
-
-            //  System.out.println(">>>>>G fail to get mac address " + address);
-
-            try {
-
-
-                ContentResolver mContentResolver = mContext.getContentResolver();
-
-                address = Settings.Secure.getString(mContentResolver, SECURE_SETTINGS_BLUETOOTH_ADDRESS);
-               Log.i("DDDD2",address);
-
-            } catch (Exception e) {
-
-
-            }
-
-
-        } else {
-
-            // System.out.println(">>>>>G sucess to get mac address " + address);
-        }
-        return address;
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -348,6 +287,7 @@ toggle = (Button) findViewById(R.id.toggle);
         mGoogleApiClient.connect();
 
     }
+
     @Override
     public void onLocationChanged(Location location) {
         if (getApplicationContext() != null) {
@@ -443,6 +383,7 @@ toggle = (Button) findViewById(R.id.toggle);
 
     private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
 
+
     @Override
     public void onRoutingFailure(RouteException e) {
         if (e != null) {
@@ -497,20 +438,50 @@ toggle = (Button) findViewById(R.id.toggle);
     }
 
     //************************** dana start
+
+
     private void unlockCar() {
-        carCrash();
+        if (flag == 0) {
+            carCrash();
+            b = false;
+        }
+
+        else {
+            if(b == true ){
+                unlock.setText("LOCK");
+                carGet.setAcquirekey(CarAcquireKey.UNLOCK);
+                carGet.updateCar();
+                b = false;
+            }
+            else{
+                unlock.setText("UNLOCK");
+                carGet.setAcquirekey(CarAcquireKey.LOCK);
+                carGet.updateCar();
+
+                b = true;
+            }
+
+        }
     }
 
 
 
-    private void bluetooth() {
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-        Intent serverIntent = new Intent(this, DeviceListActivity.class);
-        startActivityForResult(serverIntent, 1);
+
+
+    private void startsButton() {
+        startEnd.setClickable(true);
+        startEnd.setEnabled(true);
+        startEnd.setBackgroundColor(getResources().getColor(R.color.green_100));
+        carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        carGet.updateCar();
+
+    }
+
+    private void unlockbuttonstarts(){
+
+        unlock.setText("LOCK");
+        carGet.setAcquirekey(CarAcquireKey.UNLOCK);
+        carGet.updateCar();
     }
 
 
@@ -523,7 +494,6 @@ toggle = (Button) findViewById(R.id.toggle);
         AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
         builder2.setMessage("Please give your feedback");
 
-
         LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
         final View mView = inflater.inflate(R.layout.layout_dialig, null);
         final EditText feedback = mView.findViewById(R.id.editText);
@@ -535,14 +505,15 @@ toggle = (Button) findViewById(R.id.toggle);
                                                 int id) {
 
                                 try {
-                                    String replyy = feedback.getText().toString().trim();
-                                    Toast.makeText(MapsActivity.this, replyy, Toast.LENGTH_SHORT).show();
+                                     reply = feedback.getText().toString().trim();
+                                    Toast.makeText(MapsActivity.this, reply, Toast.LENGTH_SHORT).show();
+                                    carCrash3();
 
                                 }
                                 catch(Exception e){
                                     e.printStackTrace();
                                 }
-                                carCrash3();
+
                             }
                         })
                 .setNegativeButton("Skip",
@@ -550,7 +521,9 @@ toggle = (Button) findViewById(R.id.toggle);
                             public void onClick(DialogInterface dialog2,
                                                 int id) {
                                 dialog2.cancel();
+                                carCrash3();
                             }
+
                         });
 
         AlertDialog alertDialog = builder2.create();
@@ -573,9 +546,18 @@ toggle = (Button) findViewById(R.id.toggle);
             @Override
             public void onClick(View v) {
 
+                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                }
+                else
+                {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
+                }
                 Toast.makeText(MapsActivity.this, "photochoose", Toast.LENGTH_SHORT).show();
-                photoChoose();
+                // photoChoose();
             }
         });
 
@@ -585,16 +567,12 @@ toggle = (Button) findViewById(R.id.toggle);
                             @Override
                             public void onClick(DialogInterface dialog3,
                                                 int id) {
+                                dialog3.cancel();
+                                sendMessage(tempUri);
 
-                                Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-                                emailIntent.setType("application/image");
-                                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"m7mdtarek44@gmail.com"});
-                                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Test Subject");
-                                emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "From My App");
-                                //Log.i("Tarekk",path);
-                                //emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("content://" + path));
-                                emailIntent.putExtra(Intent.EXTRA_STREAM, mImageUri);
-                                startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                                carCrash4();
+
+
                             }
                         })
                 .setNegativeButton("Skip",
@@ -602,6 +580,7 @@ toggle = (Button) findViewById(R.id.toggle);
                             public void onClick(DialogInterface dialog3,
                                                 int id) {
                                 dialog3.cancel();
+                                carCrash4();
                             }
                         });
 
@@ -611,14 +590,51 @@ toggle = (Button) findViewById(R.id.toggle);
 
     }
 
-    private void carCrash() {
-//        final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+
+    private void carCrash4(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you still want to use it ?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startsButton();
+                        unlockbuttonstarts();
+                        Toast.makeText(MapsActivity.this, "carcrush", Toast.LENGTH_SHORT).show();
+                        dialog.cancel();
+                    }
+                })
+
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        carGet.setStatus(CarStatus.BROKEN);
+                        carGet.updateCar();
+                        dialog.cancel();
+                        goHome();
+                    }
+                });
+
+
+        AlertDialog alert = builder.create();
+        alert.show();
+
+
+    }
+
+    private void goHome(){
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
+    }
+
+
+    private void carCrash() {
+        flag=1;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Please Check carefully the car before unlocking it, Did the previous user harm the car? would you like to give a feedback? ")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        //   carGet.setStatus(CarStatus.enpanne);
                         carCrash2();
                         Toast.makeText(MapsActivity.this, "carcrush", Toast.LENGTH_SHORT).show();
                         dialog.cancel();
@@ -627,8 +643,9 @@ toggle = (Button) findViewById(R.id.toggle);
 
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //bluetooth();
-                        startTrip();
+                        startsButton();
+                        unlockbuttonstarts();
+                        // startTrip();
                         dialog.cancel();
                     }
                 });
@@ -641,43 +658,30 @@ toggle = (Button) findViewById(R.id.toggle);
 
     ////**************************
 
-    public void  photoChoose() {
-
-        Intent takepic = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-
-        // if (takepic.resolveActivity(getPackageManager()) != null) {
-        startActivityForResult(takepic, 4);
-
-   /*      File photoFile ;
-          photoFile = createPhotoFile();
-
-           if (photoFile != null) {
-
-                pathFile = photoFile.getAbsolutePath();
-           Uri photoUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFile);
-              takepic.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-            pic = photoUri;
-            Log.i("Tarook", pic.toString());
-               Log.i("Tarook", pic.getPath());
 
 
+
+   public Uri getImageUri(Context inContext, Bitmap inImage) {
+        Bitmap OutImage = Bitmap.createScaledBitmap(inImage, 1000, 1000,true);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), OutImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+
+    public String getRealPathFromURI(Uri uri) {
+        String path = "";
+        if (getContentResolver() != null) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                path = cursor.getString(idx);
+                cursor.close();
             }
-        }*/
-    }
-    private File createPhotoFile() {
-
-        String name =new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File storage = getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File image= null;
-        try {
-            image = File.createTempFile(name,".jpg",storage);
         }
-        catch (IOException e) {
-            Log.d("log", e.toString());
-        }
-        return image;
-
+        return path;
     }
+
     //************************* end
 
     private void endTrip() {
@@ -690,6 +694,8 @@ toggle = (Button) findViewById(R.id.toggle);
         trip.updateTrip();
         startTrip = false ;
         carGet.setStatus(CarStatus.OFF);
+        carGet.setAcquirekey(CarAcquireKey.LOCK);
+        carGet.setCarstartend(CarTrip.END);
         carGet.updateCar();
         SweetAlertDialog
                 pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
@@ -703,8 +709,6 @@ toggle = (Button) findViewById(R.id.toggle);
                 finish();
             }
         });
-
-
         pDialog.show();
         end.setVisibility(View.GONE);
     }
@@ -721,21 +725,7 @@ toggle = (Button) findViewById(R.id.toggle);
 
         return hours + ":" + (mins - hours * 60) + ":" + (seconds - mins * 60);
     }
-    public File savebitmap(Bitmap bmp) throws IOException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 60, bytes);
-        File f = new File(Environment.getExternalStorageDirectory()
-                + File.separator + "testimage.jpg");
-        f.createNewFile();
-        FileOutputStream fo = new FileOutputStream(f);
-        fo.write(bytes.toByteArray());
-        fo.close();
-        //    path = f.getAbsolutePath();
-        //   mImageUri = Uri.fromFile(f);
-        Log.i("Tarekk",this.getApplicationContext().getPackageName() + ".Control.GenericFileProvider");
-        mImageUri = FileProvider.getUriForFile(MapsActivity.this, this.getApplicationContext().getPackageName() + ".Control.GenericFileProvider", f);
-        return f;
-    }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -754,26 +744,27 @@ toggle = (Button) findViewById(R.id.toggle);
                     finish();
                 }
                 break;
-            case 4:
+          case CAMERA_REQUEST:
 
-                if (resultCode != RESULT_CANCELED) {
-                    Bitmap image = (Bitmap) data.getExtras().get("data");
-                    damagee.setImageBitmap(image);
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    damagee.setImageBitmap(photo);
+                    // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+                     tempUri = getImageUri(getApplicationContext(), photo);
 
-                    try {
-                        savebitmap(image);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    // Log.i("TAREK", data.getData().toString());
-                } else
-                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-
-                //   }
+                break;
 
         }
     }
 
+    private void sendMessage(Uri uri) {
+        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        emailIntent.setType("application/image");
+        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"m7mdtarek44@gmail.com"});
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Complaint");
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, reply);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+    }
 
     private void connectDevice(Intent data, boolean secure) {
         String address = data.getExtras()
@@ -846,14 +837,30 @@ toggle = (Button) findViewById(R.id.toggle);
             }
         }
     };
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
+            } else {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
     private void startTrip() {
         Toast.makeText(MapsActivity.this, "Code is Correct", Toast.LENGTH_SHORT).show();
         generateTrip();
         startTrip = true ;
         startTime = System.nanoTime();
-        unlock.setVisibility(View.GONE);
+        carGet.setCarstartend(CarTrip.START);
+        carGet.updateCar();
+        startEnd.setVisibility(View.GONE);
         end.setVisibility(View.VISIBLE);
+
     }
 
     private void generateTrip() {
@@ -912,4 +919,6 @@ toggle = (Button) findViewById(R.id.toggle);
             if (mChatService == null) setupChat();
         }
     }
+
+
 }

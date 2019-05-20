@@ -23,30 +23,6 @@ public Car tarek;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        bn = (Button) findViewById(R.id.toggle);
-        bn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Cars").child("12346");
-            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Car tarek = dataSnapshot.getValue(Car.class);
-                    Intent intent = getIntent();
-                    tarek = (Car) intent.getSerializableExtra("car");
 
-                    tarek.setToggle("HAHA");
-
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            }
-        });
     }
 }
