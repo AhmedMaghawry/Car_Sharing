@@ -95,15 +95,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 //Utils.hideLoading();
                 //Toast.makeText(LoginActivity.this, "Main A 11", Toast.LENGTH_SHORT).show();
-                if (task.isSuccessful()) {
-                    finish();
+
+                if (task.isSuccessful() ) {
+                    if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
+                        finish();
 
 
-                    //**************************************       home
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class); //declare new intent
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // to clear the stack and avoid any interference between activities
-                    finish();
-                    startActivity(intent);//redirect to Homepage
+                        //**************************************       home
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class); //declare new intent
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // to clear the stack and avoid any interference between activities
+                        finish();
+                        startActivity(intent);//redirect to Homepage
+                    }
+                    else {
+                        Toast.makeText(LoginActivity.this,"Please verify your account", Toast.LENGTH_SHORT).show(); //show a toast with the specific error
+
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show(); //show a toast with the specific error
                 }

@@ -12,10 +12,11 @@ public class User implements Serializable {
 
     private String name, email, phone,nid, exdate, songs, image;
     private int age, mangle1, mangle2, temp;
+    private float rate;
 
     public User() {}
 
-    public User(String name, String email, String phone, String nid, String exdate, int age, String image) {
+    public User(String name, String email, String phone, String nid, String exdate, int age, String image , float rate) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -24,6 +25,7 @@ public class User implements Serializable {
         this.age = age;
         this.songs = "";
         this.image = image;
+        this.rate=rate;
     }
 
     public String getName() {
@@ -33,6 +35,14 @@ public class User implements Serializable {
     public void setName(String name) {
         this.name = name;
         //updateUser();
+    }
+
+    public float getRate() {
+        return rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
     }
 
     public String getEmail() {
@@ -138,6 +148,7 @@ public class User implements Serializable {
         map.put("mangle2", mangle2);
         map.put("temp", temp);
         map.put("image", image);
+        map.put("rate",rate);
         return map;
     }
 
@@ -155,6 +166,9 @@ public class User implements Serializable {
         childUpdates.put("/" + FirebaseAuth.getInstance().getCurrentUser().getUid(), userValues);
         mDatabase.getReference("Users").updateChildren(childUpdates);
     }
+
+
+
 
     public boolean addUser() {
         try {

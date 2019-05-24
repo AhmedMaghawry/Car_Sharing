@@ -33,7 +33,7 @@ public class Trip implements Serializable{
 
     public void setCarid(String carid) {
         this.carid = carid;
-       //updateTrip();
+        //updateTrip();
     }
 
     public String getStart() {
@@ -42,7 +42,7 @@ public class Trip implements Serializable{
 
     public void setStart(String start) {
         this.start = start;
-     //   updateTrip();
+        //   updateTrip();
     }
 
     public String getEnd() {
@@ -51,7 +51,7 @@ public class Trip implements Serializable{
 
     public void setEnd(String end) {
         this.end = end;
-       // updateTrip();
+        // updateTrip();
     }
 
     public String getTime() {
@@ -60,7 +60,7 @@ public class Trip implements Serializable{
 
     public void setTime(String time) {
         this.time = time;
-      //  updateTrip();
+        //  updateTrip();
     }
 
     public int getFare() {
@@ -69,7 +69,7 @@ public class Trip implements Serializable{
 
     public void setFare(int fare) {
         this.fare = fare;
-       // updateTrip();
+        // updateTrip();
     }
 
     public TripStatus getStatus() {
@@ -87,7 +87,7 @@ public class Trip implements Serializable{
 
     public void setId(String id) {
         this.id = id;
-       // updateTrip();
+        // updateTrip();
     }
 
     public String getCode() {
@@ -96,7 +96,7 @@ public class Trip implements Serializable{
 
     public void setCode(String code) {
         this.code = code;
-       // updateTrip();
+        // updateTrip();
     }
 
     public Map<String, Object> toMap() {
@@ -131,7 +131,7 @@ public class Trip implements Serializable{
         try {
             DatabaseReference base = FirebaseDatabase.getInstance().getReference("Trips");
             this.id = base.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
-           // updateTrip();
+            // updateTrip();
         } catch (Exception e) {
             return false;
         }

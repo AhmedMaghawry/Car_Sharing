@@ -75,6 +75,7 @@ public class SignupImageActivity extends AppCompatActivity {
                 int age = prev.getIntExtra("age", 0);
                 String name = prev.getStringExtra("name");
                 String phone = prev.getStringExtra("phone");
+                String password = prev.getStringExtra("password");
 
                 Intent intent = new Intent(SignupImageActivity.this, SignupVerificationActivity.class); //mina's activity
                 intent.putExtra("image", "");
@@ -82,6 +83,7 @@ public class SignupImageActivity extends AppCompatActivity {
                 intent.putExtra("age", age);
                 intent.putExtra("phone", phone);
                 intent.putExtra("email", email);
+                intent.putExtra("password", password);
                 startActivity(intent);
                 finish();
             }

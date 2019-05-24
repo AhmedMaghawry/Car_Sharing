@@ -76,6 +76,7 @@ public class SignupActivity extends AppCompatActivity  implements View.OnClickLi
         }
 
         startRegisteration(email, password); //if all validation are satisfied call method
+
     }
 
     private void startRegisteration(final String email, final String password) { // method for creation of
@@ -151,6 +152,8 @@ public class SignupActivity extends AppCompatActivity  implements View.OnClickLi
         //Toast.makeText(SignupActivity.this, "Main A 2 Destroy", Toast.LENGTH_SHORT).show();
         Utils.hideLoading();
     }
+
+
 }
 
 

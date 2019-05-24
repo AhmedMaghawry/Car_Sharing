@@ -42,6 +42,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,6 +98,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -118,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     LocationRequest mLocationRequest;
     private Trip trip;
     private Car carGet;
-    private User currentUser;
+    private User currentUser, oldUser;
     private View bottomLayout;
     private TextView carName, carColor, carDistance, carDuration;
     private Button unlock, end , startEnd;
@@ -137,13 +140,13 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     private String code;
     int flag =0;
     boolean b = true;
-    //  String rateId;
+    String rateId;
 
     private ImageView damagee ;
     private String pathFile;
     //  private  Button imageDamage;
-
-
+    float i=0;
+    private Route rr;
 
 
     @Override
@@ -154,7 +157,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         LayoutInflater inflater1 = MapsActivity.this.getLayoutInflater();
         final View mView2 = inflater1.inflate(R.layout.layout_dialog, null);
         damagee = mView2.findViewById(R.id.damage);
-        //   rateId = carGet.getId();
+
 
         if (Build.VERSION.SDK_INT >= 23) {
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
@@ -181,7 +184,11 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+
                 currentUser = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
+                oldUser = dataSnapshot.child(rateId).getValue(User.class);
+
+
                 Utils.hideLoading();
             }
 
@@ -191,18 +198,30 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
                 Utils.hideLoading();
             }
         });
+
+
+
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         self = this;
         //  getBluetoothMacAddress(MapsActivity.this);
         //    Log.i("Tarook", address);
-        Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
+        carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        rateId = carGet.getId();
+        Toast.makeText(self, rateId, Toast.LENGTH_SHORT).show();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+       startActivity(new Intent(MapsActivity.this,HomeActivity.class));
+       finish();
     }
 
     @SuppressLint("ResourceAsColor")
@@ -244,6 +263,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 endTrip();
             }
         });
@@ -409,7 +429,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
         Polyline polyline = mMap.addPolyline(polyOptions);
         //polylines.add(polyline);
-
+        rr = route.get(shortestRouteIndex);
         setupBottom(route.get(shortestRouteIndex));
         //Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
 
@@ -438,6 +458,8 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     }
 
     //************************** dana start
+
+
 
 
     private void unlockCar() {
@@ -472,8 +494,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         startEnd.setClickable(true);
         startEnd.setEnabled(true);
         startEnd.setBackgroundColor(getResources().getColor(R.color.green_100));
-        carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        carGet.updateCar();
+
 
     }
 
@@ -505,7 +526,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
                                                 int id) {
 
                                 try {
-                                     reply = feedback.getText().toString().trim();
+                                    reply = feedback.getText().toString().trim();
                                     Toast.makeText(MapsActivity.this, reply, Toast.LENGTH_SHORT).show();
                                     carCrash3();
 
@@ -656,12 +677,95 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
     }
 
-    ////**************************
+    ////**************Rating
+
+
+
+    public void tripSize(){
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Trips").child(rateId);
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot trips : dataSnapshot.getChildren()) {
+                    i = i+1 ;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+    }
+
+    private void RatePreviousUser() {
+
+        tripSize();
+        AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+        builder2.setMessage("Please rate the previous user ");
+        LayoutInflater inflater = MapsActivity.this.getLayoutInflater();
+        final View mView = inflater.inflate(R.layout.rating, null);
+        final RatingBar simpleRatingBar = mView.findViewById(R.id.simpleRatingBar);
+        builder2.setView(mView).setNeutralButton("Rate",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog2,
+                                        int id) {
+
+
+                        try {
+                            float oldRating=oldUser.getRate();
+                            String totalStars = "Total Stars:: " + simpleRatingBar.getNumStars();
+                            float rating = simpleRatingBar.getRating();
+                            // Toast.makeText(self,String.valueOf(rating), Toast.LENGTH_LONG).show();
+                            float newRating =( (oldRating * i ) + rating )/(i+1);
+
+
+
+                            Toast.makeText(self,String.valueOf(newRating) + "  "  + String.valueOf(i), Toast.LENGTH_LONG).show();
+                            //  Toast.makeText(self,String.valueOf(newRating), Toast.LENGTH_LONG).show();
+
+
+                            oldUser.setRate(newRating);
+
+                            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+                            Map<String, Object> childUpdates = new HashMap<>();
+                            Map<String, Object> userValues = oldUser.toMap();
+                            childUpdates.put("/" + rateId, userValues);
+                            mDatabase.getReference("Users").updateChildren(childUpdates);
+
+                            carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            carGet.updateCar();
+
+
+                        }
+
+
+                        catch(Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+
+
+        AlertDialog alertDialog = builder2.create();
+        alertDialog.show();
 
 
 
 
-   public Uri getImageUri(Context inContext, Bitmap inImage) {
+
+
+
+    }
+
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
         Bitmap OutImage = Bitmap.createScaledBitmap(inImage, 1000, 1000,true);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), OutImage, "Title", null);
         return Uri.parse(path);
@@ -688,7 +792,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         endTime = System.nanoTime();
         trip.setEnd(mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude());
         trip.setStatus(TripStatus.FINISHED);
-        int fare = getFare(endTime - startTime , trip.getStart(), trip.getEnd());
+        int fare = getFare(endTime - startTime , rr.getDistanceValue());
         trip.setFare(fare);
         trip.setTime(getFormatedTime(endTime - startTime));
         trip.updateTrip();
@@ -713,9 +817,10 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         end.setVisibility(View.GONE);
     }
 
-    private int getFare(long duration, String start, String end) {
+    private int getFare(long duration, int dist) {
         //TODO:Change here
-        return 50;
+       int fare= (int) (duration*50+dist*100);
+        return fare;
     }
 
     private String getFormatedTime(long l) {
@@ -744,12 +849,12 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
                     finish();
                 }
                 break;
-          case CAMERA_REQUEST:
+            case CAMERA_REQUEST:
 
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    damagee.setImageBitmap(photo);
-                    // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-                     tempUri = getImageUri(getApplicationContext(), photo);
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                damagee.setImageBitmap(photo);
+                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+                tempUri = getImageUri(getApplicationContext(), photo);
 
                 break;
 
@@ -852,6 +957,8 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         }
     }
     private void startTrip() {
+
+        RatePreviousUser();
         Toast.makeText(MapsActivity.this, "Code is Correct", Toast.LENGTH_SHORT).show();
         generateTrip();
         startTrip = true ;
@@ -860,6 +967,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         carGet.updateCar();
         startEnd.setVisibility(View.GONE);
         end.setVisibility(View.VISIBLE);
+
 
     }
 

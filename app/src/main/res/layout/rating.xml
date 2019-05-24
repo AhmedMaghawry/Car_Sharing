@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RatingBar
+        android:id="@+id/simpleRatingBar"
+        android:layout_width="279dp"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:padding="20dp" />
+
+
+</LinearLayout>

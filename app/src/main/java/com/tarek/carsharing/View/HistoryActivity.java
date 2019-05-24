@@ -103,6 +103,7 @@ public class HistoryActivity extends AppCompatActivity {
                     tripsHistory.setStart(start);
                     tripsHistory.setEnd(end);
                         allTrips.add(tripsHistory);
+
                     }catch(IOException ex) {
                         //Do something with the exception
                     }

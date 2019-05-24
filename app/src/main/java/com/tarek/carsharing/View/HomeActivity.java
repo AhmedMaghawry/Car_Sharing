@@ -99,6 +99,7 @@ public class HomeActivity extends AppCompatActivity
 
         try {  // loza
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -186,6 +187,8 @@ public class HomeActivity extends AppCompatActivity
         Intent intent = new Intent(HomeActivity.this, MapsActivity.class);
         intent.putExtra("car", cars);
         startActivity(intent);
+        finish();
+
     }
 
     @Override
@@ -218,12 +221,15 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_notifications) {
 
         } else if (id == R.id.nav_history) {
+
             startActivity(new Intent(this, HistoryActivity.class));
 
         } else if (id == R.id.nav_about) {
+
             startActivity(new Intent(this, AboutActivity.class));
 
         } else if (id == R.id.nav_contact) {
+
             startActivity(new Intent(this, ContactUsActivity.class));
 
         }
@@ -267,6 +273,7 @@ public class HomeActivity extends AppCompatActivity
     public void onLocationChanged(Location location) {
         myLat = location.getLatitude();
         myLong = location.getLongitude();
+        updateUI();
     }
 
     private void updateUI() {
@@ -458,6 +465,7 @@ public class HomeActivity extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int id) {
                             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             startActivity(intent);
+                            finish();
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {

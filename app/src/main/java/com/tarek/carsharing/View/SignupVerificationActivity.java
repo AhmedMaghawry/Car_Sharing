@@ -212,9 +212,10 @@ public class SignupVerificationActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) { //check for successful registration
                     Utils.hideLoading();
-                    User user = new User(nameUser, emailUser, phoneUser, nidUser, dateFinalUser, ageUser, imageUser);
+                    User user = new User(nameUser, emailUser, phoneUser, nidUser, dateFinalUser, ageUser, imageUser,5);
                     boolean b = user.addUser();
                     if (b) {
+                        sendVerificationEmail();
                         Toast.makeText(SignupVerificationActivity.this, "Registration Successful with uid : " + FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
                         Utils.launchActivity(SignupVerificationActivity.this, HomeActivity.class, null);
                         finish();
@@ -409,12 +410,12 @@ public class SignupVerificationActivity extends AppCompatActivity {
             List<FirebaseVisionDocumentText.Paragraph> paragraphs = blocks.get(i).getParagraphs();
             for (int j = 0; j < paragraphs.size(); j++) {
                 Log.i("elec", paragraphs.get(0).getText());
-                    if (i == 2)
-                        sid = paragraphs.get(0).getText();
-                    else if(i == 3)
-                        nameEng = paragraphs.get(0).getText();
-                    else if (i == 8)
-                        date = arabicToDecimal(paragraphs.get(0).getText().replace('۶','٤').replaceAll("[\n]", "").split("/"));
+                if (i == 2)
+                    sid = paragraphs.get(0).getText();
+                else if(i == 3)
+                    nameEng = paragraphs.get(0).getText();
+                else if (i == 8)
+                    date = arabicToDecimal(paragraphs.get(0).getText().replace('۶','٤').replaceAll("[\n]", "").split("/"));
                 List<FirebaseVisionDocumentText.Word> words = paragraphs.get(j).getWords();
                 for (int l = 0; l < words.size(); l++) {
                     CloudTextGraphic cloudDocumentTextGraphic = new CloudTextGraphic(mGraphicOverlay,
@@ -455,4 +456,39 @@ public class SignupVerificationActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT); // get the image
         startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), CHOOSE_IMAGE);
     }
+
+    private void sendVerificationEmail()
+    {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // email sent
+
+
+                            // after email is sent just logout the user and finish this activity
+                            FirebaseAuth.getInstance().signOut();
+                            startActivity(new Intent(SignupVerificationActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                        else
+                        {
+                            // email not sent, so display message and restart the activity or do whatever you wish to do
+
+                            //restart this activity
+                            overridePendingTransition(0, 0);
+                            finish();
+                            overridePendingTransition(0, 0);
+                            startActivity(getIntent());
+
+                        }
+                    }
+                });
+    }
+
+
+
 }

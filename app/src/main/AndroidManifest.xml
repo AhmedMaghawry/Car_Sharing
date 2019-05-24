@@ -86,7 +86,8 @@
             android:name=".View.HomeActivity"
             android:label="Home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".View.MapsActivity" />
+        <activity android:name=".View.MapsActivity"
+            android:parentActivityName=".View.HomeActivity"/>
         <activity android:name=".View.DeviceListActivity" />
         <activity
             android:name=".View.LoginActivity"
