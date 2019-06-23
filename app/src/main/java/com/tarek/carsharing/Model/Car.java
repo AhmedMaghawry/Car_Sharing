@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Car implements Serializable {
 
-    private String type, number, image, color, location, songs, code,id;
+    private String type, number, image, color, location, songs, code,id,currentid;
     private int gaslevel, mangle1, mangle2, temp;
     private CarStatus status;
     private CarAcquireKey acquirekey;
@@ -16,12 +16,13 @@ public class Car implements Serializable {
 
     public Car() {}
 
-    public Car(String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status, CarAcquireKey acquirekey, CarTrip carstartend , String id) {
+    public Car(String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status, CarAcquireKey acquirekey, CarTrip carstartend , String id, String currentid) {
         this.type = type;
         this.number = number;
         this.image = image;
         this.color = color;
-        this.location = location;
+        switch (this.location = location) {
+        }
         this.mangle1 = mangle1;
         this.mangle2 = mangle2;
         this.temp = temp;
@@ -31,6 +32,7 @@ public class Car implements Serializable {
         this.acquirekey=acquirekey;
         this.carstartend=carstartend;
         this.id=id;
+        this.currentid=currentid;
     }
 
 
@@ -46,6 +48,14 @@ public class Car implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCurrentid() {
+        return currentid;
+    }
+
+    public void setCurrentid(String currentid) {
+        this.currentid = currentid;
     }
 
     public void setType(String type) {
@@ -187,6 +197,7 @@ public class Car implements Serializable {
         map.put("carstartend", carstartend);
         map.put("code", code);
         map.put("id",id);
+        map.put("currentid",currentid);
         return map;
     }
 

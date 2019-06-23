@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.tarek.carsharing.View.Promocode">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Code"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="15sp"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"/>
+
+
+    <EditText
+        android:id="@+id/enterpromo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:hint="Enter a promo code"
+        android:singleLine="true"
+        android:textCursorDrawable="@drawable/courser"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/addpromo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:background="@color/colorPrimary"
+        android:text="Add"
+        android:textColor="#ffffff" />
+
+</LinearLayout>

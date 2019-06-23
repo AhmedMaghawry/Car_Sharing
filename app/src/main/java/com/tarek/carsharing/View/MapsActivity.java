@@ -83,21 +83,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-
-
-
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -105,6 +91,9 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static android.os.Environment.getExternalStoragePublicDirectory;
 import static com.tarek.carsharing.Control.Constants.*;
+import static com.tarek.carsharing.Model.CarStatus.BROKEN;
+import static com.tarek.carsharing.Model.CarStatus.OFF;
+import static com.tarek.carsharing.Model.CarStatus.ON;
 
 public class MapsActivity extends FragmentActivity implements  OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener , RoutingListener, GoogleMap.OnMarkerClickListener {
 
@@ -127,7 +116,8 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     private Button unlock, end , startEnd;
     private BottomSheetBehavior behavior;
     private Marker carMarker;
-
+    private CarStatus status=null;
+    private String guiltUser;
     private String mConnectedDeviceName = null;
     private StringBuffer mOutStringBuffer;
     private MapsActivity self;
@@ -146,7 +136,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     private String pathFile;
     //  private  Button imageDamage;
     float i=0;
-    private Route rr;
+
 
 
     @Override
@@ -175,7 +165,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
             //String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status
             carGet = new Car("Nissan", "52415"
                     , "https://firebasestorage.googleapis.com/v0/b/mytestauthentication-392d1.appspot.com/o/cars%2FIcon-512.png?alt=media&token=c3984cb9-a3e8-4be0-a5c6-8bcf2273dd4e",
-                    "Black", "29.954643, 31.230067", 50, 60, 22, "1,2,3", 45, CarStatus.OFF, CarAcquireKey.LOCK, CarTrip.END, null );
+                    "Black", "29.954643, 31.230067", 50, 60, 22, "1,2,3", 45, CarStatus.OFF, CarAcquireKey.LOCK, CarTrip.END, null,null );
         }
 
         DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users");
@@ -205,24 +195,22 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         self = this;
         //  getBluetoothMacAddress(MapsActivity.this);
         //    Log.i("Tarook", address);
-       // Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
-        carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        rateId = carGet.getId();
+
+        rateId = carGet.getId().toString();
         Toast.makeText(self, rateId, Toast.LENGTH_SHORT).show();
+        status = carGet.getStatus();
+
 
     }
 
-    @Override
-    public void onBackPressed() {
-       startActivity(new Intent(MapsActivity.this,HomeActivity.class));
-       finish();
-    }
+
 
     @SuppressLint("ResourceAsColor")
     private void setupBottom(Route route) {
@@ -263,7 +251,6 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 endTrip();
             }
         });
@@ -429,7 +416,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
         Polyline polyline = mMap.addPolyline(polyOptions);
         //polylines.add(polyline);
-        rr = route.get(shortestRouteIndex);
+
         setupBottom(route.get(shortestRouteIndex));
         //Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
 
@@ -463,9 +450,19 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
 
     private void unlockCar() {
-        if (flag == 0) {
-            carCrash();
+
+        if (flag == 0 ){
+            if (status != BROKEN){
+                carCrash();
+            }
+            else{
+                startsButton();
+                unlockbuttonstarts();
+            }
+
             b = false;
+            flag = 1;
+
         }
 
         else {
@@ -500,6 +497,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
     private void unlockbuttonstarts(){
 
+        carGet.setCurrentid(FirebaseAuth.getInstance().getCurrentUser().getUid());
         unlock.setText("LOCK");
         carGet.setAcquirekey(CarAcquireKey.UNLOCK);
         carGet.updateCar();
@@ -562,6 +560,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         final View mView2 = inflater1.inflate(R.layout.layout_dialog, null);
         final Button imageDamage = mView2.findViewById(R.id.imageDamage);
         damagee = mView2.findViewById(R.id.damage);
+
 
         imageDamage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -628,8 +627,6 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        carGet.setStatus(CarStatus.BROKEN);
-                        carGet.updateCar();
                         dialog.cancel();
                         goHome();
                     }
@@ -655,7 +652,8 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //   carGet.setStatus(CarStatus.enpanne);
+                        carGet.setStatus(CarStatus.BROKEN);
+                        carGet.updateCar();
                         carCrash2();
                         Toast.makeText(MapsActivity.this, "carcrush", Toast.LENGTH_SHORT).show();
                         dialog.cancel();
@@ -664,6 +662,8 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        carGet.setStatus(CarStatus.ON);
+                        carGet.updateCar();
                         startsButton();
                         unlockbuttonstarts();
                         // startTrip();
@@ -678,8 +678,6 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     }
 
     ////**************Rating
-
-
 
     public void tripSize(){
 
@@ -701,6 +699,10 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
 
     }
+
+
+
+
 
     private void RatePreviousUser() {
 
@@ -726,8 +728,10 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
 
 
-                            Toast.makeText(self,String.valueOf(newRating) + "  "  + String.valueOf(i), Toast.LENGTH_LONG).show();
+                            Toast
+                                    .makeText(self,String.valueOf(newRating) + "  "  + String.valueOf(i), Toast.LENGTH_LONG).show();
                             //  Toast.makeText(self,String.valueOf(newRating), Toast.LENGTH_LONG).show();
+
 
 
                             oldUser.setRate(newRating);
@@ -737,8 +741,6 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
                             Map<String, Object> userValues = oldUser.toMap();
                             childUpdates.put("/" + rateId, userValues);
                             mDatabase.getReference("Users").updateChildren(childUpdates);
-
-                            carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
                             carGet.updateCar();
 
 
@@ -792,12 +794,16 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         endTime = System.nanoTime();
         trip.setEnd(mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude());
         trip.setStatus(TripStatus.FINISHED);
-        int fare = getFare(endTime - startTime , rr.getDistanceValue());
+        int fare = getFare(endTime - startTime , trip.getStart(), trip.getEnd());
         trip.setFare(fare);
         trip.setTime(getFormatedTime(endTime - startTime));
         trip.updateTrip();
         startTrip = false ;
-        carGet.setStatus(CarStatus.OFF);
+        carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        if (carGet.getStatus() == ON ){
+            carGet.setStatus(CarStatus.OFF);
+            carGet.updateCar();
+        }
         carGet.setAcquirekey(CarAcquireKey.LOCK);
         carGet.setCarstartend(CarTrip.END);
         carGet.updateCar();
@@ -817,10 +823,9 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         end.setVisibility(View.GONE);
     }
 
-    private int getFare(long duration, int dist) {
+    private int getFare(long duration, String start, String end) {
         //TODO:Change here
-       int fare= (int) (duration*50+dist*100);
-        return fare;
+        return 50;
     }
 
     private String getFormatedTime(long l) {
@@ -853,7 +858,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
                 damagee.setImageBitmap(photo);
-                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP`
                 tempUri = getImageUri(getApplicationContext(), photo);
 
                 break;
@@ -862,11 +867,29 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     }
 
     private void sendMessage(Uri uri) {
+
+        DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users");
+        mData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                User userProfileData = dataSnapshot.child(carGet.getId()).getValue(User.class);
+                guiltUser = userProfileData.getEmail();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                Toast.makeText(MapsActivity.this, databaseError.getCode(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
         Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
         emailIntent.setType("application/image");
         emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"m7mdtarek44@gmail.com"});
-        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Complaint");
-        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, reply);
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,     "Complaint");
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, carGet.getId() +"\n" +reply);
         emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
@@ -977,7 +1000,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         trip.setCode(code);
         carGet.setMangle1(currentUser.getMangle1());
         carGet.setMangle2(currentUser.getMangle2());
-        carGet.setStatus(CarStatus.ON);
+        //  carGet.setStatus(ON);
         carGet.updateCar();
     }
 

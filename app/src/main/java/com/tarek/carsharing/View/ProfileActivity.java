@@ -3,6 +3,7 @@ package com.tarek.carsharing.View;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,7 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -55,7 +58,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                 User userProfileData = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
 
-                profileName.setText(userProfileData.getName());
+                profileName.setText(decrypt(userProfileData.getName()));
                 profileAge.setText(userProfileData.getAge()+"");
                 profileEmail.setText(userProfileData.getEmail());
                 ivNumber.setText(userProfileData.getPhone());
@@ -79,6 +82,43 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    private static final String key = "aesEncryptionKey";
+    private static final String initVector = "encryptionIntVec";
+
+    public static String encrypt(String value) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            return Base64.encodeToString(encrypted,0);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String decrypt(String encrypted) {
+        try {
+
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
+            byte[] original = cipher.doFinal(Base64.decode(encrypted,0));
+
+            return new String(original);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -89,5 +129,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         }
     }
+
+
+
+
 
 }

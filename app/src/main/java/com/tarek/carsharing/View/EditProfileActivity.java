@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,6 +32,10 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener   {
 
@@ -117,11 +122,13 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void editUser() {
 
-        String   name     = profileName.getText().toString();
+        String   name     = encrypt(profileName.getText().toString());
+
         String   old      =profileAge.getText().toString();
         String number = ivNumber.getText().toString();
 
-        if( (TextUtils.isEmpty(name)) || (TextUtils.isEmpty(old))  || (TextUtils.isEmpty(number)) ) {
+        if(Integer.parseInt(old) >= 70 )//(TextUtils.isEmpty(name)) || (TextUtils.isEmpty(old))  || (TextUtils.isEmpty(number)) )
+     {
             Toast.makeText(this, "please Fill all the information needed", Toast.LENGTH_LONG).show();
         }
         else {
@@ -229,9 +236,41 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    private static final String key = "aesEncryptionKey";
+    private static final String initVector = "encryptionIntVec";
 
+    public static String encrypt(String value) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
 
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
 
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            return Base64.encodeToString(encrypted,0);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String decrypt(String encrypted) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
+            byte[] original = cipher.doFinal(Base64.decode(encrypted,0));
+
+            return new String(original);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
 
 
 

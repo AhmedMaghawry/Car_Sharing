@@ -68,6 +68,9 @@
             android:name=".View.HistoryActivity"
             android:label="My Trips"
             android:parentActivityName=".View.HomeActivity" />
+        <activity android:name=".View.Promocode"
+            android:label="Promo code"
+            android:parentActivityName=".View.HomeActivity" />
         <activity
             android:name=".View.ContactUsActivity"
             android:label="Find Us"

@@ -233,6 +233,11 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(this, ContactUsActivity.class));
 
         }
+        else if (id == R.id.nav_promocode){
+            startActivity(new Intent(this, Promocode.class));
+
+
+        }
 
         else if (id == R.id.nav_logout) {
 
