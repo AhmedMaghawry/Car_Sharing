@@ -2,30 +2,21 @@ package com.tarek.carsharing.View;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Address;
 import android.location.Location;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -86,6 +77,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.xml.datatype.Duration;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -131,14 +126,12 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     int flag =0;
     boolean b = true;
     String rateId;
-
     private ImageView damagee ;
     private String pathFile;
     //  private  Button imageDamage;
     float i=0;
-
-
-
+private Double y;
+    private String lastSendLoc ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,11 +156,12 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         //TODO: Change here
         if (carGet == null) {
             //String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status
+
             carGet = new Car("Nissan", "52415"
                     , "https://firebasestorage.googleapis.com/v0/b/mytestauthentication-392d1.appspot.com/o/cars%2FIcon-512.png?alt=media&token=c3984cb9-a3e8-4be0-a5c6-8bcf2273dd4e",
                     "Black", "29.954643, 31.230067", 50, 60, 22, "1,2,3", 45, CarStatus.OFF, CarAcquireKey.LOCK, CarTrip.END, null,null );
         }
-
+        lastSendLoc = carGet.getLocation();
         DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users");
 
         mData.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -230,7 +224,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         carDistance.setText(route.getDistanceText());
         carDuration.setText(route.getDurationText());
 
-        if (route.getDistanceValue() < 300) {
+        if (route.getDistanceValue() < 50000) {
             unlock.setClickable(true);
             unlock.setEnabled(true);
             unlock.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
@@ -323,6 +317,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
                     LatLng carLocation = new LatLng(Double.parseDouble(res[0].trim()), Double.parseDouble(res[1].trim()));
                     MarkerOptions marker = new MarkerOptions().position(carLocation).title("car").icon(BitmapDescriptorFactory.fromResource(R.drawable.car));
                     carMarker = mMap.addMarker(marker);
+                    if(!startTrip)
                     getRouteToMarker(carLocation);
                 }
             });
@@ -416,6 +411,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
         Polyline polyline = mMap.addPolyline(polyOptions);
         //polylines.add(polyline);
+
 
         setupBottom(route.get(shortestRouteIndex));
         //Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
@@ -563,10 +559,11 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
 
 
         imageDamage.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
 
-                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                if ((MapsActivity.this).checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 {
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
                 }
@@ -791,41 +788,57 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     //************************* end
 
     private void endTrip() {
-        endTime = System.nanoTime();
-        trip.setEnd(mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude());
-        trip.setStatus(TripStatus.FINISHED);
-        int fare = getFare(endTime - startTime , trip.getStart(), trip.getEnd());
-        trip.setFare(fare);
-        trip.setTime(getFormatedTime(endTime - startTime));
-        trip.updateTrip();
-        startTrip = false ;
-        carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        if (carGet.getStatus() == ON ){
-            carGet.setStatus(CarStatus.OFF);
-            carGet.updateCar();
-        }
-        carGet.setAcquirekey(CarAcquireKey.LOCK);
-        carGet.setCarstartend(CarTrip.END);
-        carGet.updateCar();
-        SweetAlertDialog
-                pDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
-        pDialog.setTitleText("Fare");
-        pDialog.setContentText("Trip Completed your fair is : " + fare + " LE");
-        pDialog.setConfirmText("OK");
-        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+        getCurrentLocation(new onAction() {
             @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                Utils.launchActivity(MapsActivity.this,HomeActivity.class,null);
-                finish();
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onFinish(Object object) {
+                String v = (String) object;
+
+                endTime = System.nanoTime();
+                //  trip.setEnd(mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude());
+                trip.setEnd(v);
+
+                trip.setStatus(TripStatus.FINISHED);
+                int fare = getFare(endTime - startTime );
+                trip.setFare(fare);
+                trip.setTime(getFormatedTime(endTime - startTime));
+                trip.updateTrip();
+                startTrip = false ;
+                carGet.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                if (carGet.getStatus() == ON ){
+                    carGet.setStatus(CarStatus.OFF);
+
+                    carGet.updateCar();
+                }
+                carGet.setLocation(v);
+                carGet.setAcquirekey(CarAcquireKey.LOCK);
+                carGet.setCarstartend(CarTrip.END);
+                carGet.updateCar();
+                SweetAlertDialog
+                        pDialog = new SweetAlertDialog(MapsActivity.this, SweetAlertDialog.WARNING_TYPE);
+                pDialog.setTitleText("Fare");
+                pDialog.setContentText("Trip Completed your fair is : " + fare + " LE");
+                pDialog.setConfirmText("OK");
+                pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        Utils.launchActivity(MapsActivity.this,HomeActivity.class,null);
+                        finish();
+                    }
+                });
+                pDialog.show();
+                end.setVisibility(View.GONE);
             }
         });
-        pDialog.show();
-        end.setVisibility(View.GONE);
     }
 
-    private int getFare(long duration, String start, String end) {
+    private int getFare(long duration ) {
         //TODO:Change here
-        return 50;
+        return (int) (y*10+((duration)/1000000000)*5);
     }
 
     private String getFormatedTime(long l) {
@@ -979,8 +992,9 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
             }
         }
     }
-    private void startTrip() {
 
+    private void startTrip() {
+    y=0.0;
         RatePreviousUser();
         Toast.makeText(MapsActivity.this, "Code is Correct", Toast.LENGTH_SHORT).show();
         generateTrip();
@@ -991,11 +1005,35 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         startEnd.setVisibility(View.GONE);
         end.setVisibility(View.VISIBLE);
 
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                getCurrentLocation(new onAction() {
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onFinish(Object object) {
+                        String x = (String) object;
+                        String[] old = lastSendLoc.split(",");
+                        String[] newLoc = x.split(",");
+                        Double temp =  distance(Double.parseDouble(old[0]), Double.parseDouble(old[1]), Double.parseDouble(newLoc[0]), Double.parseDouble(newLoc[1]), "K");
+                        y+=temp;
+                        lastSendLoc=x;
+                        drawMoveRoute(x);
+
+                    }
+                });
+            }
+        }, 0, 5000);
+
 
     }
 
     private void generateTrip() {
-        trip = new Trip(carGet.getNumber(), mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude());
+        trip = new Trip(carGet.getNumber(), carGet.getLocation());
         trip.addTrip();
         trip.setCode(code);
         carGet.setMangle1(currentUser.getMangle1());
@@ -1049,7 +1087,50 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         } else {
             if (mChatService == null) setupChat();
         }
+
+    }
+    public double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        }
+        else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit == "K") {
+                dist = dist * 1.609344;
+            } else if (unit == "N") {
+                dist = dist * 0.8684;
+            }
+            return (dist);
+        }
+    }
+    private LatLng getLaLn(String x) {
+        String[] start = x.split(",");
+        LatLng startLoc = new LatLng(Double.parseDouble(start[0]), Double.parseDouble(start[1]));
+        return startLoc;
     }
 
+    private void drawMoveRoute(String cur) {
+        LatLng start = getLaLn(carGet.getLocation());
+        LatLng newLoc = getLaLn(cur);
+        Routing routing = new Routing.Builder()
+                .key("AIzaSyDPdyQ0DKwxdHuZQOFGIBBpz_CyRVDuhdE")
+                .travelMode(AbstractRouting.TravelMode.WALKING)
+                .withListener(this)
+                .alternativeRoutes(true)
+                .waypoints(start, newLoc)
 
+                .build();
+        routing.execute();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(MapsActivity.this,HomeActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

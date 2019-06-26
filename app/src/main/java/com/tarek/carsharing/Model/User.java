@@ -10,13 +10,13 @@ import java.util.Map;
 
 public class User implements Serializable {
 
-    private String name, email, phone,nid, exdate, songs, image;
+    private String name, email, phone,nid, exdate, songs, image,promocode;
     private int age, mangle1, mangle2, temp;
     private float rate;
 
     public User() {}
 
-    public User(String name, String email, String phone, String nid, String exdate, int age, String image , float rate) {
+    public User(String name, String email, String phone, String nid, String exdate, int age, String image , float rate, String promocode) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -26,6 +26,7 @@ public class User implements Serializable {
         this.songs = "";
         this.image = image;
         this.rate=rate;
+        this.promocode=promocode;
     }
 
     public String getName() {
@@ -35,6 +36,14 @@ public class User implements Serializable {
     public void setName(String name) {
         this.name = name;
         //updateUser();
+    }
+
+    public String getPromocode() {
+        return promocode;
+    }
+
+    public void setPromocode(String promocode) {
+        this.promocode = promocode;
     }
 
     public float getRate() {
@@ -149,6 +158,7 @@ public class User implements Serializable {
         map.put("temp", temp);
         map.put("image", image);
         map.put("rate",rate);
+        map.put("promocode",promocode);
         return map;
     }
 
@@ -172,11 +182,16 @@ public class User implements Serializable {
 
     public boolean addUser() {
         try {
+
             DatabaseReference base = FirebaseDatabase.getInstance().getReference("Users");
             base.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(this);
-        } catch (Exception e) {
-            return false;
         }
+
+        catch (Exception e) {
+            return false;
+
+        }
+
         return true;
     }
 }

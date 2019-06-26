@@ -122,12 +122,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void editUser() {
 
-        String   name     = encrypt(profileName.getText().toString());
-
-        String   old      =profileAge.getText().toString();
+        String name = encrypt(profileName.getText().toString());
+        String old  = profileAge.getText().toString();
         String number = ivNumber.getText().toString();
 
-        if(Integer.parseInt(old) >= 70 )//(TextUtils.isEmpty(name)) || (TextUtils.isEmpty(old))  || (TextUtils.isEmpty(number)) )
+        if((TextUtils.isEmpty(name)) || (TextUtils.isEmpty(old))  || (TextUtils.isEmpty(number)) )
      {
             Toast.makeText(this, "please Fill all the information needed", Toast.LENGTH_LONG).show();
         }
