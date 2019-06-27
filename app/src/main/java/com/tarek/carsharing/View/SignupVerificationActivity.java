@@ -212,7 +212,7 @@ public class SignupVerificationActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) { //check for successful registration
                     Utils.hideLoading();
-                    User user = new User(nameUser, emailUser, phoneUser, nidUser, dateFinalUser, ageUser, imageUser,5,null);
+                    User user = new User(nameUser, emailUser, phoneUser, nidUser, dateFinalUser, ageUser, imageUser,5,0,0);
                     boolean b = user.addUser();
                     if (b) {
                         sendVerificationEmail();

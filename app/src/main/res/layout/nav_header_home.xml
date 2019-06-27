@@ -22,17 +22,52 @@
         app:civ_border_color="@color/colorPrimary"/>
 
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Welcome , "
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:layout_marginLeft="5dp"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:text="Welcome,  "/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/nav_header_subtitle" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:layout_marginLeft="5dp"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:text="Your Rating : "/>
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+
+            android:textSize="15sp" />
+    </LinearLayout>
 
 </LinearLayout>

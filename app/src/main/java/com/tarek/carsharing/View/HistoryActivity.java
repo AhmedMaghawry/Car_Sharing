@@ -109,20 +109,15 @@ public class HistoryActivity extends AppCompatActivity {
                     }
 
 
-                    Log.i("mohamed","1");
                 }
 
                 Collections.reverse(allTrips);
 
-                Log.i("mohamed","4");
-
-
-                Log.i("mohamed","5");
                 action.onFinish(null);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.i("mohamed","6");
+
                 Toast.makeText(HistoryActivity.this, databaseError.getCode(), Toast.LENGTH_SHORT).show();
             }
         });

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Trip implements Serializable{
 
-    private String carid, start, end, time, id, code;
+    private String carid, start, end, time, id, code,promocode;
     private int fare;
     private TripStatus status;
 
@@ -25,6 +25,7 @@ public class Trip implements Serializable{
         this.time = "";
         this.id = "";
         this.code = "";
+        this.promocode="";
     }
 
     public String getCarid() {
@@ -99,6 +100,14 @@ public class Trip implements Serializable{
         // updateTrip();
     }
 
+    public String getPromocode() {
+        return promocode;
+    }
+
+    public void setPromocode(String promocode) {
+        this.promocode = promocode;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("carid", carid);
@@ -109,6 +118,7 @@ public class Trip implements Serializable{
         map.put("status", status);
         map.put("code", code);
         map.put("id", id);
+        map.put("promocode",promocode);
         return map;
     }
 

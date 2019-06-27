@@ -10,13 +10,13 @@ import java.util.Map;
 
 public class User implements Serializable {
 
-    private String name, email, phone,nid, exdate, songs, image,promocode;
-    private int age, mangle1, mangle2, temp;
+    private String name, email, phone,nid, exdate, songs, image;
+    private int age, mangle1, mangle2, temp,promocode,promovalue;
     private float rate;
 
     public User() {}
 
-    public User(String name, String email, String phone, String nid, String exdate, int age, String image , float rate, String promocode) {
+    public User(String name, String email, String phone, String nid, String exdate, int age, String image , float rate, int promocode , int promovalue ) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -27,6 +27,7 @@ public class User implements Serializable {
         this.image = image;
         this.rate=rate;
         this.promocode=promocode;
+        this.promovalue= promovalue;
     }
 
     public String getName() {
@@ -38,11 +39,11 @@ public class User implements Serializable {
         //updateUser();
     }
 
-    public String getPromocode() {
+    public int getPromocode() {
         return promocode;
     }
 
-    public void setPromocode(String promocode) {
+    public void setPromocode(int promocode) {
         this.promocode = promocode;
     }
 
@@ -144,6 +145,15 @@ public class User implements Serializable {
         //updateUser();
     }
 
+    public int getPromovalue() {
+        return promovalue;
+    }
+
+    public void setPromovalue(int promovalue) {
+        this.promovalue = promovalue;
+    }
+
+
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("name", name);
@@ -159,6 +169,7 @@ public class User implements Serializable {
         map.put("image", image);
         map.put("rate",rate);
         map.put("promocode",promocode);
+        map.put("promovalue",promovalue);
         return map;
     }
 

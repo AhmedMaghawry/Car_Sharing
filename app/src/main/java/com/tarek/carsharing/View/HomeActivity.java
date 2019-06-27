@@ -40,6 +40,7 @@ import com.tarek.carsharing.Model.CarStatus;
 import com.tarek.carsharing.Model.User;
 import com.tarek.carsharing.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
@@ -61,14 +62,15 @@ public class HomeActivity extends AppCompatActivity
     TextView plateNumber2;
     TextView plateNumber3;
     ImageView nav_imageView;  // picture in navigation view (user picture)
-    TextView nav_name;        // name in navigator view  ( user name )
+    TextView nav_rate;
+    TextView nav_name;// name in navigator view  ( user name )
     ArrayList<Car> allCars = new ArrayList<>(); // arraylist takes "car" dynamcaly changing
 
     protected LocationManager locationManager;     // loza
     protected LocationListener locationListener;  // loza
     protected double myLat = 0;    //default latitude
     protected double myLong = 0;   // default  longititude
-
+    private static DecimalFormat df2 = new DecimalFormat("#.#");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +158,7 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         nav_imageView = navigationView.getHeaderView(0).findViewById(R.id.imageView);
         nav_name = navigationView.getHeaderView(0).findViewById(R.id.name);
+        nav_rate = navigationView.getHeaderView(0).findViewById(R.id.rating);
         DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         mData.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -165,6 +168,7 @@ public class HomeActivity extends AppCompatActivity
                 User userProfileData = dataSnapshot.getValue(User.class);
 
                 nav_name.setText(userProfileData.getName());
+                nav_rate.setText(df2.format(userProfileData.getRate())+"");
                 try {
                     Picasso.with(getApplication()).load(userProfileData.getImage())
                             .placeholder(R.drawable.pla)

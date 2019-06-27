@@ -86,4 +86,10 @@
 
 
     </LinearLayout>
+    <Button
+        android:id="@+id/buttonpromo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="charged" />
+
 </android.support.design.widget.CoordinatorLayout>

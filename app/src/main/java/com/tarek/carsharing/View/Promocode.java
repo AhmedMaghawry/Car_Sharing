@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.tarek.carsharing.Control.Utils;
 import com.tarek.carsharing.Model.Promocodes;
+import com.tarek.carsharing.Model.Trip;
 import com.tarek.carsharing.Model.User;
 import com.tarek.carsharing.R;
 
@@ -27,6 +28,7 @@ public class Promocode extends AppCompatActivity implements View.OnClickListener
     private Button addPromo;
     private String promo;
     private User currentUserr;
+    private int  clickable=0;
 
 
 
@@ -57,15 +59,15 @@ public class Promocode extends AppCompatActivity implements View.OnClickListener
                 Utils.hideLoading();
             }
 
-
         });
     }
+
     @Override
     public void onClick(View v) {
 
         CheckPromo();
 
-      //  Toast.makeText(this, "method", Toast.LENGTH_SHORT).show();
+        //  Toast.makeText(this, "method", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -80,33 +82,51 @@ public class Promocode extends AppCompatActivity implements View.OnClickListener
         datapromo.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-             boolean flag=false;
-                for (DataSnapshot datapro : dataSnapshot.getChildren()) {
+                boolean flag=false;
 
+                for (DataSnapshot datapro : dataSnapshot.getChildren()) {
 
                     Promocodes arraypromo = datapro.getValue(Promocodes.class);
                     String promoGeneral = arraypromo.getName();
+
+
                     if (promo.equals(promoGeneral)) {
+
                         flag=true;
+                        int times = arraypromo.getTimes();
+                        int uses =currentUserr.getPromocode();
+                        int check = 0;
+                        check = times - uses;
+                        if (clickable == 0){
+                            if(check > 0  ) {
 
-                        Toast.makeText(Promocode.this,"Right",Toast.LENGTH_SHORT).show();
-                        currentUserr.setPromocode(test.getName());
-/*                        int yes = test.getTimes() - test.getUsed();
 
-                        if (yes >= 0) {
-                            test.setValue(arraypromo.getValue());
+                                currentUserr.setPromocode(uses + 1);
+                                currentUserr.setPromovalue(arraypromo.getValue());
+                                currentUserr.updateUser();
+                                clickable = 1;
 
-                        } else {
-                            Toast.makeText(Promocode.this, "you already have used this promocode", Toast.LENGTH_SHORT).show();
-                            test.setValue(0);
+                            }
+                            else
+                            {
+
+                                Toast.makeText(Promocode.this, "This promocode is expired", Toast.LENGTH_SHORT).show();
+                            }
                         }
-  */                  }
+
+
+
+
+                        Toast.makeText(Promocode.this,arraypromo.getValue()+"" +"%",Toast.LENGTH_SHORT).show();
+
+
+                    }
 
 
                 }
                 if(!flag){
 
-                        Toast.makeText(Promocode.this,"Wrong",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Promocode.this,"Invalid promocode",Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -122,5 +142,7 @@ public class Promocode extends AppCompatActivity implements View.OnClickListener
 
     }
 
-}
 
+
+
+}

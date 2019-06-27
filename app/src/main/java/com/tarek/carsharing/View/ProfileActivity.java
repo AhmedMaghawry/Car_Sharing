@@ -58,7 +58,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                 User userProfileData = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
 
-                profileName.setText(decrypt(userProfileData.getName()));
+                profileName.setText(userProfileData.getName());
                 profileAge.setText(userProfileData.getAge()+"");
                 profileEmail.setText(userProfileData.getEmail());
                 ivNumber.setText(userProfileData.getPhone());

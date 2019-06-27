@@ -43,6 +43,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         viewHolder.mType.setText(cars.get(position).getType());
         viewHolder.mNumber.setText(cars.get(position).getNumber());
         viewHolder.mColor.setText(cars.get(position).getColor());
+        viewHolder.mfare.setText(trips.get(position).getFare()+"");
+        viewHolder.mpromocode.setText(trips.get(position).getPromocode());
         Picasso.with(context).load(cars.get(position).getImage())
                 .into(viewHolder.mImage);
 
@@ -61,6 +63,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         public TextView mColor;
         public TextView mNumber;
         public CircleImageView mImage;
+        public TextView mfare;
+        public TextView mpromocode;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +75,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             mNumber = itemView.findViewById(R.id.number);
             mColor = itemView.findViewById(R.id.color);
             mImage = itemView.findViewById(R.id.ivProfilePic);
+            mfare = itemView.findViewById(R.id.fare);
+            mpromocode = itemView.findViewById(R.id.promocode);
         }
     }
 }

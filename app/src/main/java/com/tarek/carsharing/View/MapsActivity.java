@@ -74,6 +74,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,7 +118,7 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     private String mConnectedDeviceName = null;
     private StringBuffer mOutStringBuffer;
     private MapsActivity self;
-
+public int fare;
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
     public  String address;
@@ -128,19 +130,27 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     String rateId;
     private ImageView damagee ;
     private String pathFile;
+    private int Gas;
     //  private  Button imageDamage;
     float i=0;
 private Double y;
     private String lastSendLoc ;
+  private  int gazLevel1,gazLevel2;
+  private   int discount;
+   private Boolean addDiscountFlag = false;
+
+
+private Button buttonpromo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
+        bottomLayout = findViewById(R.id.design_bottom_sheet);
+        behavior = BottomSheetBehavior.from(bottomLayout);
         LayoutInflater inflater1 = MapsActivity.this.getLayoutInflater();
         final View mView2 = inflater1.inflate(R.layout.layout_dialog, null);
         damagee = mView2.findViewById(R.id.damage);
-
+        buttonpromo = findViewById(R.id.buttonpromo);
 
         if (Build.VERSION.SDK_INT >= 23) {
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
@@ -153,6 +163,14 @@ private Double y;
         Intent intent = getIntent();
         carGet = (Car) intent.getSerializableExtra("car");
 
+        buttonpromo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                specialPromo();
+              //  Toast.makeText(MapsActivity.this, Gas , Toast.LENGTH_SHORT).show();
+
+            }
+        });
         //TODO: Change here
         if (carGet == null) {
             //String type, String number, String image, String color, String location, int mangle1, int mangle2, int temp, String songs, int gaslevel, CarStatus status
@@ -171,7 +189,6 @@ private Double y;
 
                 currentUser = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
                 oldUser = dataSnapshot.child(rateId).getValue(User.class);
-
 
                 Utils.hideLoading();
             }
@@ -209,8 +226,7 @@ private Double y;
     @SuppressLint("ResourceAsColor")
     private void setupBottom(Route route) {
 
-        bottomLayout = findViewById(R.id.design_bottom_sheet);
-        behavior = BottomSheetBehavior.from(bottomLayout);
+
         carName = findViewById(R.id.car_name);
         carColor = findViewById(R.id.car_color);
         carDistance = findViewById(R.id.car_dist);
@@ -223,6 +239,7 @@ private Double y;
         carColor.setText(carGet.getColor());
         carDistance.setText(route.getDistanceText());
         carDuration.setText(route.getDurationText());
+
 
         if (route.getDistanceValue() < 50000) {
             unlock.setClickable(true);
@@ -497,6 +514,8 @@ private Double y;
         unlock.setText("LOCK");
         carGet.setAcquirekey(CarAcquireKey.UNLOCK);
         carGet.updateCar();
+        gazLevel1=carGet.getGaslevel();
+
     }
 
 
@@ -803,7 +822,26 @@ private Double y;
                 trip.setEnd(v);
 
                 trip.setStatus(TripStatus.FINISHED);
-                int fare = getFare(endTime - startTime );
+                if(!addDiscountFlag) {
+                    if(currentUser.getPromovalue()==0) {
+                        fare = getFare(endTime - startTime);
+                        trip.setPromocode("No promocode");
+                    }
+                    else{
+                        fare =getFare3(endTime - startTime);
+
+                        trip.setPromocode((currentUser.getPromovalue()+"%")+"");
+                        currentUser.setPromovalue(0);
+                        currentUser.updateUser();
+
+                    }
+                }
+                else{
+                    fare = getFare2(endTime - startTime);
+
+                    trip.setPromocode("Refuel");
+                    addDiscountFlag=false;
+                }
                 trip.setFare(fare);
                 trip.setTime(getFormatedTime(endTime - startTime));
                 trip.updateTrip();
@@ -839,6 +877,17 @@ private Double y;
     private int getFare(long duration ) {
         //TODO:Change here
         return (int) (y*10+((duration)/1000000000)*5);
+    }
+    private int getFare2(long duration ) {
+        //TODO:Change here
+        return (int) (0.8*(y*10+((duration)/1000000000)*5));
+    }
+    private int getFare3(long duration ) {
+        //TODO:Change here
+
+        float promo = (float)((currentUser.getPromovalue()))/100;
+        return (int) (promo*(y*10+((duration)/1000000000)*5));
+
     }
 
     private String getFormatedTime(long l) {
@@ -1132,5 +1181,37 @@ private Double y;
         Intent intent = new Intent(MapsActivity.this,HomeActivity.class);
         startActivity(intent);
         finish();
+    }
+
+
+    public void specialPromo(){
+        FirebaseDatabase.getInstance().getReference("Cars").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Car carprofile = dataSnapshot.child(carGet.getNumber()).getValue(Car.class);
+                Gas = carprofile.getGaslevel();
+                Log.i("Mohamed3",Gas+"");
+                Log.i("Mohamed2",gazLevel1+"");
+
+                int check = Gas - gazLevel1 ;
+
+                Log.i("Mohamed1",check+"");
+                if (check > 50 ){
+
+                    addDiscountFlag = true;
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
     }
 }
