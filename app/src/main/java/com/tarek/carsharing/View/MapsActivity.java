@@ -3,8 +3,7 @@ package com.tarek.carsharing.View;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -42,7 +42,7 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.tarek.carsharing.Control.BluetoothChatService;
+
 import com.tarek.carsharing.Control.TripCodeGenerator;
 import com.tarek.carsharing.Control.Utils;
 import com.tarek.carsharing.Control.onAction;
@@ -119,8 +119,8 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     private StringBuffer mOutStringBuffer;
     private MapsActivity self;
 public int fare;
-    private BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothChatService mChatService = null;
+/*    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothChatService mChatService = null;*/
     public  String address;
     private long startTime;
     private long endTime;
@@ -140,7 +140,7 @@ private Double y;
    private Boolean addDiscountFlag = false;
 
 
-private Button buttonpromo;
+private FloatingActionButton buttonpromo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,12 +201,12 @@ private Button buttonpromo;
         });
 
 
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         self = this;
         //  getBluetoothMacAddress(MapsActivity.this);
         //    Log.i("Tarook", address);
-        Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(MapsActivity.this, mBluetoothAdapter.getAddress(), Toast.LENGTH_SHORT).show();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -902,7 +902,7 @@ private Button buttonpromo;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+          /*  case REQUEST_CONNECT_DEVICE_SECURE:
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                 }
@@ -915,7 +915,7 @@ private Button buttonpromo;
                     Toast.makeText(this, "Not enable", Toast.LENGTH_SHORT).show();
                     finish();
                 }
-                break;
+                break;*/
             case CAMERA_REQUEST:
 
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
@@ -956,15 +956,15 @@ private Button buttonpromo;
         startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
 
-    private void connectDevice(Intent data, boolean secure) {
+/*    private void connectDevice(Intent data, boolean secure) {
         String address = data.getExtras()
                 .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         mChatService.connect(device, secure);
-    }
+    }*/
 
     //handler to manage the chat service
-    @SuppressLint("HandlerLeak")
+/*    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -1026,7 +1026,7 @@ private Button buttonpromo;
                     break;
             }
         }
-    };
+    };*/
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -1091,7 +1091,7 @@ private Button buttonpromo;
         carGet.updateCar();
     }
 
-    private void sendMessage(String message) {
+  /*  private void sendMessage(String message) {
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(this, "Not conected", Toast.LENGTH_SHORT).show();
             return;
@@ -1109,33 +1109,35 @@ private Button buttonpromo;
     private void setupChat() {
         mChatService = new BluetoothChatService(this, mHandler);
         mOutStringBuffer = new StringBuffer("");
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mChatService != null) mChatService.stop();
+      //  if (mChatService != null) mChatService.stop();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mChatService != null) {
+/*        if (mChatService != null) {
             if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
                 mChatService.start();
             }
-        }
+        }*/
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+/*
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, 3);
         } else {
             if (mChatService == null) setupChat();
         }
+*/
 
     }
     public double distance(double lat1, double lon1, double lat2, double lon2, String unit) {

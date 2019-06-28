@@ -16,7 +16,7 @@
 
     <LinearLayout
         android:id="@+id/design_bottom_sheet"
-        android:layout_width="446dp"
+        android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/bottom_bg"
@@ -86,10 +86,16 @@
 
 
     </LinearLayout>
-    <Button
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:id="@+id/buttonpromo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="charged" />
+        android:layout_gravity="bottom|right"
+        android:layout_margin="10dp"
+        app:maxImageSize="35dp"
+        app:fabCustomSize="60dp"
+
+        android:src="@drawable/ic_gasstation"/>
 
 </android.support.design.widget.CoordinatorLayout>
