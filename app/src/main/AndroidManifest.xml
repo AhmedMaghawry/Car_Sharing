@@ -76,11 +76,9 @@
             android:label="Find Us"
             android:parentActivityName=".View.HomeActivity" />
         <activity
-            android:name=".View.Notifications"
-            android:label="Notifications" />
-        <activity
             android:name=".View.AboutActivity"
-            android:label="About" />
+            android:label="About"
+            android:parentActivityName=".View.HomeActivity"/>
         <activity
             android:name=".View.ProfileActivity"
             android:label="My Profile"

@@ -53,6 +53,7 @@ import com.tarek.carsharing.Model.CarTrip;
 import com.tarek.carsharing.Model.Trip;
 import com.tarek.carsharing.Model.TripStatus;
 import com.tarek.carsharing.Model.User;
+import com.tarek.carsharing.Model.Warning;
 import com.tarek.carsharing.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -77,6 +78,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -876,17 +879,17 @@ private FloatingActionButton buttonpromo;
 
     private int getFare(long duration ) {
         //TODO:Change here
-        return (int) (y*10+((duration)/1000000000)*5);
+        return (int) (7+(y*2+((duration)/1000000000)*0.004));
     }
     private int getFare2(long duration ) {
         //TODO:Change here
-        return (int) (0.8*(y*10+((duration)/1000000000)*5));
+        return (int) (0.8*(7+(y*2+((duration)/1000000000)*0.004)));
     }
     private int getFare3(long duration ) {
         //TODO:Change here
 
         float promo = (float)((currentUser.getPromovalue()))/100;
-        return (int) (promo*(y*10+((duration)/1000000000)*5));
+        return (int) (promo*(7+((y*2+((duration)/1000000000)*0.004))));
 
     }
 
@@ -1072,7 +1075,12 @@ private FloatingActionButton buttonpromo;
                         y+=temp;
                         lastSendLoc=x;
                         drawMoveRoute(x);
-
+                        if(y>50)
+                        {
+                            Date currentTime = Calendar.getInstance().getTime();
+                            Warning warning = new Warning(carGet.getId(),y+"",currentTime.toString(),lastSendLoc);
+                            warning.addWarning();
+                        }
                     }
                 });
             }
@@ -1180,9 +1188,11 @@ private FloatingActionButton buttonpromo;
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(MapsActivity.this,HomeActivity.class);
-        startActivity(intent);
-        finish();
+        if(!startTrip) {
+            Intent intent = new Intent(MapsActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
 
@@ -1192,12 +1202,7 @@ private FloatingActionButton buttonpromo;
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Car carprofile = dataSnapshot.child(carGet.getNumber()).getValue(Car.class);
                 Gas = carprofile.getGaslevel();
-                Log.i("Mohamed3",Gas+"");
-                Log.i("Mohamed2",gazLevel1+"");
-
                 int check = Gas - gazLevel1 ;
-
-                Log.i("Mohamed1",check+"");
                 if (check > 50 ){
 
                     addDiscountFlag = true;

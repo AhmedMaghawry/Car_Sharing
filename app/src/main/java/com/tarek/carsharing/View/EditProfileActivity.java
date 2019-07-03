@@ -122,7 +122,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void editUser() {
 
-        String name = encrypt(profileName.getText().toString());
+        String name = profileName.getText().toString();
         String old  = profileAge.getText().toString();
         String number = ivNumber.getText().toString();
 
@@ -291,6 +291,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
         Utils.hideLoading();
     }
-
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(EditProfileActivity.this,ProfileActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
 }

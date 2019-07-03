@@ -37,7 +37,31 @@ public class ContactUsActivity extends AppCompatActivity {
                 startActivity(callIntent);
             }
         });
+        bn.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:01283557633"));
+                startActivity(callIntent);
+            }
+        });
         l2.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View arg0) {
+
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/337592936901040"));
+                    startActivity(intent);
+
+
+                } catch(Exception e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/Go-Around-337592936901040")));
+                    return;
+                }
+            }
+        });
+        bn2.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
 
@@ -62,7 +86,15 @@ public class ContactUsActivity extends AppCompatActivity {
             }
         });
 
+        bn3.setOnClickListener(new View.OnClickListener() {
 
+            public void onClick(View arg0) {
+                Intent email = new Intent(Intent.ACTION_SEND);
+                email.putExtra(Intent.EXTRA_EMAIL, new String[]{ "go.around.carshare@gmail.com"});
+                email.setType("message/rfc822");
+                startActivity(Intent.createChooser(email, "Choose an Email client :"));
+            }
+        });
 
 
 

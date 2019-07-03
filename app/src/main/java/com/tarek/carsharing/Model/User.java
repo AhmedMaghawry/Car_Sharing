@@ -13,6 +13,7 @@ public class User implements Serializable {
     private String name, email, phone,nid, exdate, songs, image;
     private int age, mangle1, mangle2, temp,promocode,promovalue;
     private float rate;
+    private Boolean Activation;
 
     public User() {}
 
@@ -28,6 +29,7 @@ public class User implements Serializable {
         this.rate=rate;
         this.promocode=promocode;
         this.promovalue= promovalue;
+        this.Activation= false;
     }
 
     public String getName() {
@@ -153,6 +155,13 @@ public class User implements Serializable {
         this.promovalue = promovalue;
     }
 
+    public Boolean getActivation() {
+        return Activation;
+    }
+
+    public void setActivation(Boolean activation) {
+        Activation = activation;
+    }
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
@@ -170,6 +179,7 @@ public class User implements Serializable {
         map.put("rate",rate);
         map.put("promocode",promocode);
         map.put("promovalue",promovalue);
+        map.put("Activation",Activation);
         return map;
     }
 

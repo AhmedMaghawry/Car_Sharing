@@ -64,7 +64,7 @@ public class HistoryActivity extends AppCompatActivity {
 
             @Override
             public void onFinish(Object o) {
-                mohamed();
+                getTrips();
             }
         });
     }
@@ -131,7 +131,7 @@ public class HistoryActivity extends AppCompatActivity {
 
 
 
-    protected  void mohamed() {
+    protected  void getTrips() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDatabase1 = FirebaseDatabase.getInstance().getReference("Cars");
         mDatabase1.addListenerForSingleValueEvent(new ValueEventListener() {

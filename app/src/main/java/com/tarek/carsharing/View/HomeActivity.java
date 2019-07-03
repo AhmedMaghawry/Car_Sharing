@@ -120,10 +120,8 @@ public class HomeActivity extends AppCompatActivity
             io.printStackTrace();
         }
 
+
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Cars"); // car database
-
-
-
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -131,9 +129,40 @@ public class HomeActivity extends AppCompatActivity
                 // for  loop to get all cars information and  added to allCars arraylist
                 for(DataSnapshot carData : dataSnapshot.getChildren()){
 
-                    Car carsInformation = carData.getValue(Car.class);
-                    if (carsInformation.getStatus() != CarStatus.ON)
-                        allCars.add(carsInformation);
+                    final Car carsInformation = carData.getValue(Car.class);
+                    if (carsInformation.getStatus() != CarStatus.ON ) {
+
+                        DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users");
+
+                        mData.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                              User  currentUser = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
+                                if((currentUser.getRate()>3)&&currentUser.getActivation())
+                                    allCars.add(carsInformation);
+                                else if((currentUser.getRate()>1)&&currentUser.getActivation()){
+                                    if(carsInformation.getType().equals("Lada"))
+                                    {
+
+                                        allCars.add(carsInformation);
+                                    }
+
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(HomeActivity.this, databaseError.getCode(), Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+
+
+                    }
                 }
 
                 updateUI(); // loza
@@ -222,9 +251,7 @@ public class HomeActivity extends AppCompatActivity
 
             startActivity(new Intent(this, ProfileActivity.class));
 
-        } else if (id == R.id.nav_notifications) {
-
-        } else if (id == R.id.nav_history) {
+        }  else if (id == R.id.nav_history) {
 
             startActivity(new Intent(this, HistoryActivity.class));
 
@@ -436,7 +463,7 @@ public class HomeActivity extends AppCompatActivity
                     startMap(allCars.get(finalFirstminIndex));
                 }
             });
-
+    box1.setVisibility(View.VISIBLE);
             box2.setVisibility(View.GONE);
             box3.setVisibility(View.GONE);
 

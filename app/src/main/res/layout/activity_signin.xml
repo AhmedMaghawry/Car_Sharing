@@ -61,7 +61,7 @@
         android:ems="10"
         android:textCursorDrawable="@drawable/courser"
         android:backgroundTint="@color/colorPrimary"
-        android:hint="Email Adress"
+        android:hint="Email Address"
         android:inputType="textPersonName"
         android:textColor="?android:attr/textColorPrimaryInverseNoDisable"
         android:textColorHint="@color/common_google_signin_btn_text_dark_default"

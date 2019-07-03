@@ -1,11 +1,18 @@
 package com.tarek.carsharing.View;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,8 +21,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tarek.carsharing.Control.SharedValues;
 import com.tarek.carsharing.Control.Utils;
 import com.tarek.carsharing.Control.mina.CloudTextGraphic;
@@ -44,6 +55,7 @@ import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText;
 import com.google.firebase.ml.vision.document.FirebaseVisionDocumentTextRecognizer;
 import com.pepperonas.materialdialog.MaterialDialog;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -51,31 +63,41 @@ import static com.tarek.carsharing.Control.Utils.sendVerCode;
 
 public class SignupVerificationActivity extends AppCompatActivity {
 
-    private static final int CHOOSE_IMAGE = 101;
+   // private static final int CHOOSE_IMAGE = 101;
 
-    private ImageView imageView;
+    private ImageView lisImage,sidImage;
 
-    private Uri uriProfileImage;        //uniform resources identifier image storage
+
 
     private Button nextBtn;
-    private GraphicOverlay mGraphicOverlay;
+ //   private GraphicOverlay mGraphicOverlay;
     private Bitmap mSelectedImage;
-    private String sid, nameEng;
-    private String[] date;
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String mVerificationId;
 
     private String nameUser, emailUser, phoneUser, nidUser, dateFinalUser, imageUser, passwordUser;
     private int ageUser;
+private Boolean flag1=false,flag2=false;
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    private static final int CAMERA_REQUEST2 = 1999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_singup_verification);
-        mGraphicOverlay = findViewById(R.id.graphic_overlay);
-        imageView = findViewById(R.id.imageView);
-        nextBtn = findViewById(R.id.ButtonNext);
-
+        Intent prev = getIntent();
+        emailUser = prev.getStringExtra("email");
+        ageUser = prev.getIntExtra("age", 0);
+        nameUser = prev.getStringExtra("name");
+        phoneUser = prev.getStringExtra("phone");
+        imageUser = prev.getStringExtra("image");
+        passwordUser = prev.getStringExtra("password");
+       // mGraphicOverlay = findViewById(R.id.graphic_overlay);
+        lisImage = findViewById(R.id.image);
+        sidImage=findViewById(R.id.image2);
+        nextBtn = findViewById(R.id.next);
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             @Override
@@ -135,14 +157,8 @@ public class SignupVerificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Todo : Change true
-                if ((sid != null && nameEng != null && date != null) || true) {
-                    Intent prev = getIntent();
-                    emailUser = prev.getStringExtra("email");
-                    ageUser = prev.getIntExtra("age", 0);
-                    nameUser = prev.getStringExtra("name");
-                    phoneUser = prev.getStringExtra("phone");
-                    imageUser = prev.getStringExtra("image");
-                    passwordUser = prev.getStringExtra("password");
+                if (flag1&&flag2) {
+
                     //TODO : change here
                     //String dateFinal = date[0] + "-" + date[1] + "-" + date[2];
                     //String nid = sid;
@@ -151,20 +167,31 @@ public class SignupVerificationActivity extends AppCompatActivity {
 
                     sendVerCode("+20" + phoneUser, mCallbacks);
                 } else {
-                    Toast.makeText(SignupVerificationActivity.this, "Verifying failed. Try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupVerificationActivity.this, "Please add the two photos", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         // on click lilo :heart: , save and display
-        imageView.setOnClickListener(new View.OnClickListener() {
+        lisImage.setOnClickListener(new View.OnClickListener() {
 
 
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-                showImageChooser();           // method permit user to select image
+                captureImage(CAMERA_REQUEST);         // method permit user to select image
             }
         });
+        sidImage.setOnClickListener(new View.OnClickListener() {
+
+
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View view) {
+                captureImage(CAMERA_REQUEST2);         // method permit user to select image
+            }
+        });
+
     }
 
     private void verifyVerificationCode(String code) {
@@ -201,6 +228,33 @@ public class SignupVerificationActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+    @TargetApi(Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void captureImage(int CAMERA_REQUEST) {
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+        }
+        else {
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            } else {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     private void goCodeCorrect(PhoneAuthCredential credential) {
@@ -274,7 +328,7 @@ public class SignupVerificationActivity extends AppCompatActivity {
             // wait for
             // a UI layout pass to get the right values. So delay it to first time image
             // rendering time.
-            mImageMaxWidth = imageView.getWidth();
+            mImageMaxWidth = lisImage.getWidth();
         }
 
         return mImageMaxWidth;
@@ -290,7 +344,7 @@ public class SignupVerificationActivity extends AppCompatActivity {
             // a UI layout pass to get the right values. So delay it to first time image
             // rendering time.
             mImageMaxHeight =
-                    imageView.getHeight();
+                    lisImage.getHeight();
         }
 
         return mImageMaxHeight;
@@ -330,45 +384,116 @@ public class SignupVerificationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // check for the image selected
-        if (requestCode == CHOOSE_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            uriProfileImage = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uriProfileImage);
-                imageView.setImageBitmap(bitmap);
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+        flag1=true;
+           handlecamera(data);
 
-                mGraphicOverlay.clear();
 
-                mSelectedImage = bitmap;
-                if (mSelectedImage != null) {
-                    // Get the dimensions of the View
-                    Pair<Integer, Integer> targetedSize = getTargetedWidthHeight();
 
-                    int targetWidth = targetedSize.first;
-                    int maxHeight = targetedSize.second;
+        }
+        else if(requestCode == CAMERA_REQUEST2 && resultCode == Activity.RESULT_OK)
+        {
+            flag2=true;
+            handlecamera2(data);
+        }
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+    private void handlecamera(Intent data){
 
-                    // Determine how much to scale down the image
-                    float scaleFactor =
-                            Math.max(
-                                    (float) mSelectedImage.getWidth() / (float) targetWidth,
-                                    (float) mSelectedImage.getHeight() / (float) maxHeight);
+        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        uploadImageToFirebaseStorage("License",getImageUri(getApplicationContext(),bitmap));
+        lisImage.setImageBitmap(bitmap);
+        //   mGraphicOverlay.clear();
 
-                    Bitmap resizedBitmap =
-                            Bitmap.createScaledBitmap(
-                                    mSelectedImage,
-                                    (int) (mSelectedImage.getWidth() / scaleFactor),
-                                    (int) (mSelectedImage.getHeight() / scaleFactor),
-                                    true);
-                    mSelectedImage = resizedBitmap;
-                }
-                runCloudTextRecognition();
+        mSelectedImage = bitmap;
+        if (mSelectedImage != null) {
+            // Get the dimensions of the View
+            Pair<Integer, Integer> targetedSize = getTargetedWidthHeight();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            int targetWidth = targetedSize.first;
+            int maxHeight = targetedSize.second;
+
+            // Determine how much to scale down the image
+            float scaleFactor =
+                    Math.max(
+                            (float) mSelectedImage.getWidth() / (float) targetWidth,
+                            (float) mSelectedImage.getHeight() / (float) maxHeight);
+
+            Bitmap resizedBitmap =
+                    Bitmap.createScaledBitmap(
+                            mSelectedImage,
+                            (int) (mSelectedImage.getWidth() / scaleFactor),
+                            (int) (mSelectedImage.getHeight() / scaleFactor),
+                            true);
+            mSelectedImage = resizedBitmap;
+        }
+    }
+    private void handlecamera2(Intent data){
+
+
+        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        uploadImageToFirebaseStorage("SID",getImageUri(getApplicationContext(),bitmap));
+        sidImage.setImageBitmap(bitmap);
+        //   mGraphicOverlay.clear();
+
+        mSelectedImage = bitmap;
+        if (mSelectedImage != null) {
+            // Get the dimensions of the View
+            Pair<Integer, Integer> targetedSize = getTargetedWidthHeight();
+
+            int targetWidth = targetedSize.first;
+            int maxHeight = targetedSize.second;
+
+            // Determine how much to scale down the image
+            float scaleFactor =
+                    Math.max(
+                            (float) mSelectedImage.getWidth() / (float) targetWidth,
+                            (float) mSelectedImage.getHeight() / (float) maxHeight);
+
+            Bitmap resizedBitmap =
+                    Bitmap.createScaledBitmap(
+                            mSelectedImage,
+                            (int) (mSelectedImage.getWidth() / scaleFactor),
+                            (int) (mSelectedImage.getHeight() / scaleFactor),
+                            true);
+            mSelectedImage = resizedBitmap;
+        }
+    }
+    private void uploadImageToFirebaseStorage(String x,Uri uriProfileImage) {
+        // storage
+        Log.i("Mohameddd",phoneUser);
+        StorageReference profileImageRef =
+                FirebaseStorage.getInstance().getReference(x+"/" + phoneUser + ".jpg"); // in database folder profilepics
+        //System.currentTimeMillis(), is random sequence done  by getting time in millis
+        if (uriProfileImage != null) { // upload
+            Log.i("Mohameddd","Trueeee");
+            Utils.showLoading(this);
+            profileImageRef.putFile(uriProfileImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        // check uplod successful or not
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Utils.hideLoading();
+                            Toast.makeText(SignupVerificationActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                         //   profileImageUrl = taskSnapshot.getDownloadUrl().toString(); // get the url as user informations
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) { // fail to opload
+                            Utils.hideLoading();
+                            Toast.makeText(SignupVerificationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 
-    private void runCloudTextRecognition() {
+  /*  private void runCloudTextRecognition() {
 
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(mSelectedImage);
         FirebaseVisionDocumentTextRecognizer recognizer = FirebaseVision.getInstance()
@@ -393,18 +518,18 @@ public class SignupVerificationActivity extends AppCompatActivity {
                         });
 
     }
-
+*/
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
-    private void processCloudTextRecognitionResult(FirebaseVisionDocumentText text) {
+   /* private void processCloudTextRecognitionResult(FirebaseVisionDocumentText text) {
         // Task completed successfully
 
         if (text == null) {
             showToast("No text found");
             return;
         }
-        mGraphicOverlay.clear();
+     //   mGraphicOverlay.clear();
         List<FirebaseVisionDocumentText.Block> blocks = text.getBlocks();
         for (int i = 0; i < blocks.size(); i++) {
             List<FirebaseVisionDocumentText.Paragraph> paragraphs = blocks.get(i).getParagraphs();
@@ -412,21 +537,115 @@ public class SignupVerificationActivity extends AppCompatActivity {
                 Log.i("elec", paragraphs.get(0).getText());
                 if (i == 2)
                     sid = paragraphs.get(0).getText();
-                else if(i == 3)
+                else if(i == 1)
                     nameEng = paragraphs.get(0).getText();
                 else if (i == 8)
                     date = arabicToDecimal(paragraphs.get(0).getText().replace('۶','٤').replaceAll("[\n]", "").split("/"));
                 List<FirebaseVisionDocumentText.Word> words = paragraphs.get(j).getWords();
-                for (int l = 0; l < words.size(); l++) {
+  *//*              for (int l = 0; l < words.size(); l++) {
                     CloudTextGraphic cloudDocumentTextGraphic = new CloudTextGraphic(mGraphicOverlay,
                             words.get(l));
                     mGraphicOverlay.add(cloudDocumentTextGraphic);
 
-                }
+                }*//*
             }
         }
+        if (checkName(nameEng) && checkSID(sid) && checkDate(date[0]+"/"+date[1]+"/"+date[2])){
+            sidtv.setText(sid);
+            nametv.setText(nameEng);
+            datetv.setText(date[0]+"/"+date[1]+"/"+date[2]);
+            nextBtn.setVisibility(View.VISIBLE);
+        } else {
+            nextBtn.setVisibility(View.INVISIBLE);
+            Toast.makeText(this, "Capture Error Please Recapture", Toast.LENGTH_SHORT).show();
+        }
+
         //Log.i("elec", sid + " " + nameEng + " " + date[0] + "/"+date[1]+"/"+date[2]);
+    }*/
+    private boolean checkDate(String x) {
+        Log.i("Mo1111","enter date");
+        Log.i("Mo1111",x);
+        if(x==null)
+            return false;
+        if (x.isEmpty())
+            return false;
+
+        String[] strings = x.split("/");
+
+        if (strings.length != 3)
+            return false;
+
+        for (String w : strings)
+            for (char c : w.toCharArray())
+                if (!Character.isDigit(c))
+                    return false;
+
+        return true;
     }
+
+    private boolean checkSID(String x) {
+
+        Log.i("Mo1111","enter id");
+        Log.i("Mo1111",x);
+        if(x==null)
+            return false;
+        if (x.isEmpty())
+            return false;
+
+        String[] strings = x.split(" ");
+
+        if (strings.length != 1)
+            return false;
+
+        if (x.length() != 14)
+            return false;
+
+        for (char c : x.toCharArray()) {
+            if (!Character.isDigit(c))
+                return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkName(String x) {
+        Log.i("Mo1111","enter name");
+        Log.i("Mo1111",x);
+        if(x==null)
+            return false;
+        if (x.isEmpty())
+            return false;
+
+        String[] strings = x.split(" ");
+
+        if (strings.length < 1)
+            return false;
+
+/*        for (String f : strings) {
+            if (!isStringOnlyAlphabet(f)) {
+                Log.i("Mo1111",f);
+                return false;
+            }
+        }*/
+
+        return true;
+    }
+
+    private boolean isStringOnlyAlphabet(String str)
+    {
+        if (str == null || str.equals("")) {
+            return false;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if ((!(ch >= 'A' && ch <= 'Z'))
+                    && (!(ch >= 'a' && ch <= 'z'))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     private String[] arabicToDecimal(String[] numbers) {
         String[] res = new String[numbers.length];
@@ -454,7 +673,7 @@ public class SignupVerificationActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT); // get the image
-        startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), CHOOSE_IMAGE);
+      //  startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), CHOOSE_IMAGE);
     }
 
     private void sendVerificationEmail()

@@ -84,7 +84,7 @@
                     android:layout_marginLeft="5dp"
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
-                    android:text="Car id : "/>
+                    android:text="Car number : "/>
 
 
                 <TextView
@@ -109,7 +109,7 @@
                     android:layout_marginLeft="5dp"
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
-                    android:text="Start : "/>
+                    android:text="Start location : "/>
 
                 <TextView
                     android:id="@+id/start"
@@ -133,7 +133,7 @@
                     android:layout_marginLeft="5dp"
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
-                    android:text="End : "/>
+                    android:text="End location : "/>
 
                 <TextView
                     android:id="@+id/end"
