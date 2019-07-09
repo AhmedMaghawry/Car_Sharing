@@ -11,7 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
-        android:text="Vehicle rental is becoming a good alternative to many people desiring independence and freedom of transport but cannot sustain the car ownership expenses."/>
+        android:layout_margin="15dp"
+        android:textColor="@color/black"
+        android:text="This is a startup created by a team of Alexandrian Engineers. It started as their final year graduation project at the Department of Communications and Electronics Engineering, Alexandria University under the superision of Prof. Mohamed Ismail Elbanna.
+Go around is a smart solution for people who can't afford a car, yet they would love a rental service that will make them feel welcome and familiar with every car they book."/>
 
 
 </LinearLayout>

@@ -139,7 +139,6 @@ public class HistoryActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (int j = 0; j < allTrips.size(); j++) {
                     carid = allTrips.get(j).getCarid();
-                    Toast.makeText(HistoryActivity.this, "dddd "+carid, Toast.LENGTH_SHORT).show();
                     Car cars = dataSnapshot.child(carid).getValue(Car.class);
                     car1.add(cars);
 

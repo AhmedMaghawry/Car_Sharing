@@ -130,7 +130,7 @@ public class HomeActivity extends AppCompatActivity
                 for(DataSnapshot carData : dataSnapshot.getChildren()){
 
                     final Car carsInformation = carData.getValue(Car.class);
-                    if (carsInformation.getStatus() != CarStatus.ON ) {
+                    if ((carsInformation.getStatus() != CarStatus.ON) && (carsInformation.getStatus() != CarStatus.BROKEN )) {
 
                         DatabaseReference mData = FirebaseDatabase.getInstance().getReference("Users");
 
@@ -142,7 +142,7 @@ public class HomeActivity extends AppCompatActivity
                               User  currentUser = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
                                 if((currentUser.getRate()>3)&&currentUser.getActivation())
                                     allCars.add(carsInformation);
-                                else if((currentUser.getRate()>1)&&currentUser.getActivation()){
+                                else if((currentUser.getRate()>2)&&currentUser.getActivation()){
                                     if(carsInformation.getType().equals("Lada"))
                                     {
 
@@ -547,7 +547,6 @@ public class HomeActivity extends AppCompatActivity
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
         else { // get permession from user
-            Toast.makeText(HomeActivity.this, "Loc1 Permision already granted", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -559,7 +558,6 @@ public class HomeActivity extends AppCompatActivity
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
         }
         else { // get permession from user
-            Toast.makeText(HomeActivity.this, "Loc2 Permision already granted", Toast.LENGTH_SHORT).show();
         }
     }
 

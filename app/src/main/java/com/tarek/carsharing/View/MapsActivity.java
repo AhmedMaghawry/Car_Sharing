@@ -218,7 +218,7 @@ private FloatingActionButton buttonpromo;
         mapFragment.getMapAsync(this);
 
         rateId = carGet.getId().toString();
-        Toast.makeText(self, rateId, Toast.LENGTH_SHORT).show();
+
         status = carGet.getStatus();
 
 
@@ -525,7 +525,6 @@ private FloatingActionButton buttonpromo;
 
     private void carCrash2() {
 
-        Toast.makeText(MapsActivity.this, "carcrush2  on ", Toast.LENGTH_SHORT).show();
 
 
         AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
@@ -543,7 +542,7 @@ private FloatingActionButton buttonpromo;
 
                                 try {
                                     reply = feedback.getText().toString().trim();
-                                    Toast.makeText(MapsActivity.this, reply, Toast.LENGTH_SHORT).show();
+
                                     carCrash3();
 
                                 }
@@ -595,7 +594,6 @@ private FloatingActionButton buttonpromo;
                     startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
                 }
-                Toast.makeText(MapsActivity.this, "photochoose", Toast.LENGTH_SHORT).show();
                 // photoChoose();
             }
         });
@@ -632,6 +630,7 @@ private FloatingActionButton buttonpromo;
 
 
     private void carCrash4(){
+/*
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Do you still want to use it ?")
                 .setCancelable(false)
@@ -639,7 +638,6 @@ private FloatingActionButton buttonpromo;
                     public void onClick(DialogInterface dialog, int id) {
                         startsButton();
                         unlockbuttonstarts();
-                        Toast.makeText(MapsActivity.this, "carcrush", Toast.LENGTH_SHORT).show();
                         dialog.cancel();
                     }
                 })
@@ -654,7 +652,8 @@ private FloatingActionButton buttonpromo;
 
         AlertDialog alert = builder.create();
         alert.show();
-
+*/
+        goHome();
 
     }
 
@@ -674,7 +673,6 @@ private FloatingActionButton buttonpromo;
                         carGet.setStatus(CarStatus.BROKEN);
                         carGet.updateCar();
                         carCrash2();
-                        Toast.makeText(MapsActivity.this, "carcrush", Toast.LENGTH_SHORT).show();
                         dialog.cancel();
                     }
                 })
@@ -747,8 +745,7 @@ private FloatingActionButton buttonpromo;
 
 
 
-                            Toast
-                                    .makeText(self,String.valueOf(newRating) + "  "  + String.valueOf(i), Toast.LENGTH_LONG).show();
+
                             //  Toast.makeText(self,String.valueOf(newRating), Toast.LENGTH_LONG).show();
 
 
@@ -883,7 +880,7 @@ private FloatingActionButton buttonpromo;
     }
     private int getFare2(long duration ) {
         //TODO:Change here
-        return (int) (0.8*(7+(y*2+((duration)/1000000000)*0.004)));
+        return (int) (0.9*(7+(y*2+((duration)/1000000000)*0.004)));
     }
     private int getFare3(long duration ) {
         //TODO:Change here
@@ -1073,9 +1070,11 @@ private FloatingActionButton buttonpromo;
                         String[] newLoc = x.split(",");
                         Double temp =  distance(Double.parseDouble(old[0]), Double.parseDouble(old[1]), Double.parseDouble(newLoc[0]), Double.parseDouble(newLoc[1]), "K");
                         y+=temp;
+                        if(lastSendLoc!=x)
+                        //drawMoveRoute2(x);
                         lastSendLoc=x;
                         drawMoveRoute(x);
-                        if(y>50)
+                        if(y>30)
                         {
                             Date currentTime = Calendar.getInstance().getTime();
                             Warning warning = new Warning(carGet.getId(),y+"",currentTime.toString(),lastSendLoc);
@@ -1178,6 +1177,19 @@ private FloatingActionButton buttonpromo;
         Routing routing = new Routing.Builder()
                 .key("AIzaSyDPdyQ0DKwxdHuZQOFGIBBpz_CyRVDuhdE")
                 .travelMode(AbstractRouting.TravelMode.WALKING)
+                .withListener(this)
+                .alternativeRoutes(true)
+                .waypoints(start, newLoc)
+
+                .build();
+        routing.execute();
+    }
+    private void drawMoveRoute2(String cur) {
+        LatLng start = getLaLn(lastSendLoc);
+        LatLng newLoc = getLaLn(cur);
+        Routing routing = new Routing.Builder()
+                .key("AIzaSyDPdyQ0DKwxdHuZQOFGIBBpz_CyRVDuhdE")
+                .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
                 .alternativeRoutes(true)
                 .waypoints(start, newLoc)

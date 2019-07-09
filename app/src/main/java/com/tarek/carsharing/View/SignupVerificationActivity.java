@@ -143,7 +143,6 @@ private Boolean flag1=false,flag2=false;
                 // now need to ask the user to enter the code and then construct a credential
                 // by combining the code with a verification ID.
                 //super.onCodeSent(verificationId, token);
-                Log.d("mob", "onCodeSent:" + verificationId);
                 Toast.makeText(SignupVerificationActivity.this, "Code Sent", Toast.LENGTH_SHORT).show();
                 // Save verification ID and resending token so we can use them later
                 mVerificationId = verificationId;
@@ -310,7 +309,7 @@ private Boolean flag1=false,flag2=false;
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            Log.d("dodo", "User account deleted.");
+
                                         }
                                     }
                                 });
@@ -437,7 +436,7 @@ private Boolean flag1=false,flag2=false;
 
 
         Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-        uploadImageToFirebaseStorage("SID",getImageUri(getApplicationContext(),bitmap));
+        uploadImageToFirebaseStorage("NID",getImageUri(getApplicationContext(),bitmap));
         sidImage.setImageBitmap(bitmap);
         //   mGraphicOverlay.clear();
 
@@ -466,12 +465,12 @@ private Boolean flag1=false,flag2=false;
     }
     private void uploadImageToFirebaseStorage(String x,Uri uriProfileImage) {
         // storage
-        Log.i("Mohameddd",phoneUser);
+
         StorageReference profileImageRef =
                 FirebaseStorage.getInstance().getReference(x+"/" + phoneUser + ".jpg"); // in database folder profilepics
         //System.currentTimeMillis(), is random sequence done  by getting time in millis
         if (uriProfileImage != null) { // upload
-            Log.i("Mohameddd","Trueeee");
+
             Utils.showLoading(this);
             profileImageRef.putFile(uriProfileImage)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -563,8 +562,7 @@ private Boolean flag1=false,flag2=false;
         //Log.i("elec", sid + " " + nameEng + " " + date[0] + "/"+date[1]+"/"+date[2]);
     }*/
     private boolean checkDate(String x) {
-        Log.i("Mo1111","enter date");
-        Log.i("Mo1111",x);
+
         if(x==null)
             return false;
         if (x.isEmpty())

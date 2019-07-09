@@ -151,7 +151,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
         else { // get permession from user
-            Toast.makeText(LoginActivity.this, "Loc1 Permision already granted", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -163,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
         }
         else { // get permession from user
-            Toast.makeText(LoginActivity.this, "Loc2 Permision already granted", Toast.LENGTH_SHORT).show();
+
         }
     }
 
