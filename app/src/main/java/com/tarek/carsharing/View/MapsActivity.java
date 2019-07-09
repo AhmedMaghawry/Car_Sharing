@@ -244,7 +244,7 @@ private FloatingActionButton buttonpromo;
         carDuration.setText(route.getDurationText());
 
 
-        if (route.getDistanceValue() < 50000) {
+        if (route.getDistanceValue() < 500) {
             unlock.setClickable(true);
             unlock.setEnabled(true);
             unlock.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
@@ -630,7 +630,7 @@ private FloatingActionButton buttonpromo;
 
 
     private void carCrash4(){
-/*
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Do you still want to use it ?")
                 .setCancelable(false)
@@ -652,8 +652,7 @@ private FloatingActionButton buttonpromo;
 
         AlertDialog alert = builder.create();
         alert.show();
-*/
-        goHome();
+
 
     }
 
